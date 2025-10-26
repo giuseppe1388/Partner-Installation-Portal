@@ -333,5 +333,6 @@
 - [x] Cambiare da fixed a absolute positioning
 - [x] Aggiungere overflow-visible al contenitore
 - [x] Mostrare l'ora direttamente nel blocco di anteprima durante il drag
+- [x] Nascondere il blocco originale durante il drag
 
 
