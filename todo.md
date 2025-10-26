@@ -387,3 +387,11 @@
 - [x] Tabella deve occupare tutta la larghezza disponibile
 
 
+
+
+## Bug da Risolvere (Fase 44)
+- [x] Visualizza: rimuovere dialog duplicato
+- [x] Modifica: rimuovere dialog duplicato "Cambia Stato"
+- [x] Modifica: implementare form completo invece di "Funzionalità in sviluppo..."
+
+

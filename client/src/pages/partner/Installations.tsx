@@ -274,124 +274,6 @@ export default function Installations({ partner }: InstallationsProps) {
         </Table>
       </div>
 
-      {/* Dialog Cambio Stato */}
-      <Dialog open={!!selectedInstallation} onOpenChange={(open) => !open && setSelectedInstallation(null)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cambia Stato Installazione</DialogTitle>
-            <DialogDescription>
-              {selectedInstallation?.customerName} - {selectedInstallation?.installationAddress}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <div>
-              <Label>Nuovo Stato</Label>
-              <Select value={newStatus} onValueChange={setNewStatus}>
-                <SelectTrigger className="mt-2">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="pending">In Attesa</SelectItem>
-                  <SelectItem value="scheduled">Schedulato</SelectItem>
-                  <SelectItem value="confirmed">Confermato</SelectItem>
-                  <SelectItem value="in_progress">In Corso</SelectItem>
-                  <SelectItem value="completed">Completato</SelectItem>
-                  <SelectItem value="cancelled">Annullato</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {(newStatus === 'scheduled' || newStatus === 'confirmed') && (
-              <>
-                <div>
-                  <Label>Data e Ora di Inizio</Label>
-                  <input
-                    type="datetime-local"
-                    className="w-full mt-2 px-3 py-2 border rounded-md"
-                    value={selectedInstallation?.scheduledStart ? new Date(selectedInstallation.scheduledStart).toISOString().slice(0, 16) : ""}
-                    onChange={(e) => {
-                      if (selectedInstallation) {
-                        setSelectedInstallation({
-                          ...selectedInstallation,
-                          scheduledStart: new Date(e.target.value).toISOString()
-                        });
-                      }
-                    }}
-                  />
-                </div>
-                <div>
-                  <Label>Data e Ora di Fine</Label>
-                  <input
-                    type="datetime-local"
-                    className="w-full mt-2 px-3 py-2 border rounded-md"
-                    value={selectedInstallation?.scheduledEnd ? new Date(selectedInstallation.scheduledEnd).toISOString().slice(0, 16) : ""}
-                    onChange={(e) => {
-                      if (selectedInstallation) {
-                        setSelectedInstallation({
-                          ...selectedInstallation,
-                          scheduledEnd: new Date(e.target.value).toISOString()
-                        });
-                      }
-                    }}
-                  />
-                </div>
-              </>
-            )}
-
-            {selectedInstallation && (
-              <div className="bg-muted p-3 rounded space-y-2 text-sm">
-                <div>
-                  <span className="font-medium">Cliente:</span> {selectedInstallation.customerName}
-                </div>
-                {selectedInstallation.customerPhone && (
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-3 h-3" />
-                    <a href={`tel:${selectedInstallation.customerPhone}`} className="text-primary underline">
-                      {selectedInstallation.customerPhone}
-                    </a>
-                  </div>
-                )}
-                {selectedInstallation.customerEmail && (
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-3 h-3" />
-                    <a href={`mailto:${selectedInstallation.customerEmail}`} className="text-primary underline">
-                      {selectedInstallation.customerEmail}
-                    </a>
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <MapPin className="w-3 h-3" />
-                  {selectedInstallation.installationAddress}
-                </div>
-                {selectedInstallation.technicalNotes && (
-                  <div className="flex items-start gap-2">
-                    <FileText className="w-3 h-3 mt-1" />
-                    <span>{selectedInstallation.technicalNotes}</span>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setSelectedInstallation(null)}>
-              Annulla
-            </Button>
-            <Button onClick={handleSaveStatus} disabled={changeStatusMutation.isPending}>
-              {changeStatusMutation.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Salvataggio...
-                </>
-              ) : (
-                "Salva"
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
       {/* Dialog Visualizza */}
       <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
         <DialogContent className="max-w-2xl">
@@ -445,19 +327,111 @@ export default function Installations({ partner }: InstallationsProps) {
 
       {/* Dialog Modifica */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Modifica Installazione</DialogTitle>
             <DialogDescription>
-              Modifica i dettagli dell'installazione
+              {selectedInstallation?.customerName} - {selectedInstallation?.installationAddress}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
-            <p className="text-sm text-gray-500">Funzionalità in sviluppo...</p>
-          </div>
+          {selectedInstallation && (
+            <div className="space-y-4">
+              <div>
+                <Label>Stato</Label>
+                <Select 
+                  value={selectedInstallation.status} 
+                  onValueChange={(value) => setSelectedInstallation({...selectedInstallation, status: value})}
+                >
+                  <SelectTrigger className="mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">In Attesa</SelectItem>
+                    <SelectItem value="accepted">Accettato</SelectItem>
+                    <SelectItem value="scheduled">Schedulato</SelectItem>
+                    <SelectItem value="confirmed">Confermato</SelectItem>
+                    <SelectItem value="in_progress">In Corso</SelectItem>
+                    <SelectItem value="completed">Completato</SelectItem>
+                    <SelectItem value="cancelled">Annullato</SelectItem>
+                    <SelectItem value="rejected">Rifiutato</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {(selectedInstallation.status === 'scheduled' || selectedInstallation.status === 'confirmed') && (
+                <>
+                  <div>
+                    <Label>Data e Ora di Inizio</Label>
+                    <input
+                      type="datetime-local"
+                      className="w-full mt-2 px-3 py-2 border rounded-md"
+                      value={selectedInstallation.scheduledStart ? new Date(selectedInstallation.scheduledStart).toISOString().slice(0, 16) : ""}
+                      onChange={(e) => {
+                        setSelectedInstallation({
+                          ...selectedInstallation,
+                          scheduledStart: new Date(e.target.value).toISOString()
+                        });
+                      }}
+                    />
+                  </div>
+                  <div>
+                    <Label>Data e Ora di Fine</Label>
+                    <input
+                      type="datetime-local"
+                      className="w-full mt-2 px-3 py-2 border rounded-md"
+                      value={selectedInstallation.scheduledEnd ? new Date(selectedInstallation.scheduledEnd).toISOString().slice(0, 16) : ""}
+                      onChange={(e) => {
+                        setSelectedInstallation({
+                          ...selectedInstallation,
+                          scheduledEnd: new Date(e.target.value).toISOString()
+                        });
+                      }}
+                    />
+                  </div>
+                </>
+              )}
+
+              <div>
+                <Label>Durata (minuti)</Label>
+                <Input
+                  type="number"
+                  className="mt-2"
+                  value={selectedInstallation.durationMinutes || ''}
+                  onChange={(e) => setSelectedInstallation({...selectedInstallation, durationMinutes: parseInt(e.target.value) || null})}
+                />
+              </div>
+
+              <div>
+                <Label>Note Tecniche</Label>
+                <textarea
+                  className="w-full mt-2 px-3 py-2 border rounded-md"
+                  rows={4}
+                  value={selectedInstallation.technicalNotes || ''}
+                  onChange={(e) => setSelectedInstallation({...selectedInstallation, technicalNotes: e.target.value})}
+                />
+              </div>
+            </div>
+          )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowEditDialog(false)}>Annulla</Button>
-            <Button onClick={() => setShowEditDialog(false)}>Salva</Button>
+            <Button 
+              onClick={() => {
+                if (selectedInstallation) {
+                  handleSaveStatus();
+                  setShowEditDialog(false);
+                }
+              }}
+              disabled={changeStatusMutation.isPending}
+            >
+              {changeStatusMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Salvataggio...
+                </>
+              ) : (
+                "Salva"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
