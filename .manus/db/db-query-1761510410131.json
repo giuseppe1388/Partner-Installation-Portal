@@ -1,0 +1,35 @@
+{
+  "query": "SELECT id, customerName, installationType FROM installations LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gnoqwjMueUiDos.ce00c89cbc3c --database 4uM68RE253EuzAdgQRhHTs --execute SELECT id, customerName, installationType FROM installations LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "customerName": "Mario Rossi",
+      "installationType": "NULL"
+    },
+    {
+      "id": "2",
+      "customerName": "Giulia Verdi",
+      "installationType": "NULL"
+    },
+    {
+      "id": "3",
+      "customerName": "Luca Neri",
+      "installationType": "NULL"
+    },
+    {
+      "id": "4",
+      "customerName": "Anna Bianchi",
+      "installationType": "NULL"
+    },
+    {
+      "id": "5",
+      "customerName": "Marco Ferrari",
+      "installationType": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tcustomerName\tinstallationType\n1\tMario Rossi\tNULL\n2\tGiulia Verdi\tNULL\n3\tLuca Neri\tNULL\n4\tAnna Bianchi\tNULL\n5\tMarco Ferrari\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 51
+}

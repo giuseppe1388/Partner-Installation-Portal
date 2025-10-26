@@ -317,3 +317,10 @@
 - [x] Tradurre lo stato in italiano nel popup
 
 
+
+
+## Fase 37: Bug - Tipo Installazione Non Visibile
+- [x] Tipo di installazione non visibile nel gantt (nei blocchi blu)
+- [x] Tipo di installazione non visibile nella sezione "Da Schedulare"
+
+

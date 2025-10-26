@@ -655,6 +655,7 @@ function PendingInstallationItem({ installation }: { installation: Installation 
       <div className={`absolute top-2 right-2 w-3 h-3 rounded-full ${statusBadgeColor[installation.status] || statusBadgeColor.pending}`} />
       
       <div className="font-medium text-gray-900 dark:text-white">{installation.customerName}</div>
+      <div className="text-xs text-gray-700 dark:text-gray-300">{installation.installationType || "N/A"}</div>
       <div className="text-xs text-gray-700 dark:text-gray-300">{installation.installationAddress}</div>
       <div className="text-xs text-gray-700 dark:text-gray-300">{installation.durationMinutes} min</div>
     </div>
