@@ -402,3 +402,10 @@
 - [x] Aggiungere pulsante "Chiama" nel dialog Visualizza
 
 
+
+
+## Fase 46: Formattazione Data nel Gantt
+- [x] Visualizzare data in italiano per esteso come intestazione unica per ogni giorno
+- [x] Separare gli orari per ogni slot
+
+

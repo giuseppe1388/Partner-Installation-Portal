@@ -535,6 +535,19 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                     });
                   }} style={{ scrollBehavior: 'smooth' }}>
                     <div className="flex">
+                      {dates.map((date) => (
+                        <div key={format(date, 'yyyy-MM-dd')} className="flex border-r">
+                          {/* Data header */}
+                          <div
+                            className="border-r p-2 text-xs font-semibold text-center bg-gray-50 dark:bg-gray-900"
+                            style={{ width: `${HOUR_WIDTH * hours.length}px` }}
+                          >
+                            {format(date, "EEEE, d MMMM yyyy", { locale: it })}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex">
                       {dates.map((date) =>
                         hours.map((hour) => (
                           <div
@@ -542,7 +555,6 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                             className="border-r p-2 text-xs font-semibold text-center"
                             style={{ width: `${HOUR_WIDTH}px` }}
                           >
-                            <div>{format(date, "dd MMM")}</div>
                             <div>{hour}:00</div>
                           </div>
                         ))
