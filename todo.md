@@ -145,3 +145,7 @@
 ## Bug Report
 - [x] Login tecnico non persiste dopo refresh pagina (RISOLTO: aggiunta persistenza localStorage)
 
+
+
+- [x] Appuntamenti annullati visibili nella technician app (RISOLTO: aggiunto filtro status !== 'cancelled')
+

@@ -397,6 +397,12 @@ export async function getInstallationsByTeamId(teamId: number): Promise<Installa
   const db = await getDb();
   if (!db) return [];
 
-  return await db.select().from(installations).where(eq(installations.teamId, teamId));
+  const { and, ne } = await import('drizzle-orm');
+  return await db.select().from(installations).where(
+    and(
+      eq(installations.teamId, teamId),
+      ne(installations.status, 'cancelled')
+    )
+  );
 }
 
