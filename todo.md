@@ -222,3 +222,11 @@
 - [ ] Definire il formato dei dati per l'integrazione
 - [ ] Testare l'integrazione con Salesforce
 
+
+
+## Bug da Risolvere (Continua)
+
+- [x] Cambiare i colori dei badge di stato da chiaro a scuro/nero per migliore leggibilità
+- [x] Aggiungere colonna con data di inizio e fine nella tabella Installazioni
+- [x] Permettere di cambiare la data oltre allo stato nel dialog di cambio stato
+

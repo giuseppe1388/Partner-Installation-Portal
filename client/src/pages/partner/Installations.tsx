@@ -51,13 +51,13 @@ interface Installation {
   scheduledEnd?: Date | string | null;
 }
 
-const STATUS_COLORS: Record<string, { bg: string; label: string }> = {
-  pending: { bg: "bg-yellow-100", label: "In Attesa" },
-  scheduled: { bg: "bg-blue-100", label: "Schedulato" },
-  confirmed: { bg: "bg-purple-100", label: "Confermato" },
-  in_progress: { bg: "bg-orange-100", label: "In Corso" },
-  completed: { bg: "bg-green-100", label: "Completato" },
-  cancelled: { bg: "bg-red-100", label: "Annullato" },
+const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
+  pending: { bg: "bg-yellow-500", text: "text-white", label: "In Attesa" },
+  scheduled: { bg: "bg-blue-600", text: "text-white", label: "Schedulato" },
+  confirmed: { bg: "bg-purple-600", text: "text-white", label: "Confermato" },
+  in_progress: { bg: "bg-orange-600", text: "text-white", label: "In Corso" },
+  completed: { bg: "bg-green-600", text: "text-white", label: "Completato" },
+  cancelled: { bg: "bg-red-600", text: "text-white", label: "Annullato" },
 };
 
 interface InstallationsProps {
@@ -163,6 +163,8 @@ export default function Installations({ partner }: InstallationsProps) {
               <TableHead>Telefono</TableHead>
               <TableHead>Indirizzo</TableHead>
               <TableHead>Durata</TableHead>
+              <TableHead>Inizio</TableHead>
+              <TableHead>Fine</TableHead>
               <TableHead>Stato</TableHead>
               <TableHead>Azioni</TableHead>
             </TableRow>
@@ -170,7 +172,7 @@ export default function Installations({ partner }: InstallationsProps) {
           <TableBody>
             {filteredInstallations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                   Nessuna installazione trovata
                 </TableCell>
               </TableRow>
@@ -190,8 +192,14 @@ export default function Installations({ partner }: InstallationsProps) {
                   </TableCell>
                   <TableCell className="max-w-xs truncate">{inst.installationAddress}</TableCell>
                   <TableCell>{inst.durationMinutes ? `${inst.durationMinutes} min` : "-"}</TableCell>
+                  <TableCell className="text-sm">
+                    {inst.scheduledStart ? new Date(inst.scheduledStart).toLocaleString('it-IT') : "-"}
+                  </TableCell>
+                  <TableCell className="text-sm">
+                    {inst.scheduledEnd ? new Date(inst.scheduledEnd).toLocaleString('it-IT') : "-"}
+                  </TableCell>
                   <TableCell>
-                    <Badge className={`${STATUS_COLORS[inst.status]?.bg || "bg-gray-100"}`}>
+                    <Badge className={`${STATUS_COLORS[inst.status]?.bg || "bg-gray-100"} ${STATUS_COLORS[inst.status]?.text || "text-black"}`}>
                       {STATUS_COLORS[inst.status]?.label || inst.status}
                     </Badge>
                   </TableCell>
@@ -238,6 +246,43 @@ export default function Installations({ partner }: InstallationsProps) {
                 </SelectContent>
               </Select>
             </div>
+
+            {(newStatus === 'scheduled' || newStatus === 'confirmed') && (
+              <>
+                <div>
+                  <Label>Data e Ora di Inizio</Label>
+                  <input
+                    type="datetime-local"
+                    className="w-full mt-2 px-3 py-2 border rounded-md"
+                    value={selectedInstallation?.scheduledStart ? new Date(selectedInstallation.scheduledStart).toISOString().slice(0, 16) : ""}
+                    onChange={(e) => {
+                      if (selectedInstallation) {
+                        setSelectedInstallation({
+                          ...selectedInstallation,
+                          scheduledStart: new Date(e.target.value).toISOString()
+                        });
+                      }
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label>Data e Ora di Fine</Label>
+                  <input
+                    type="datetime-local"
+                    className="w-full mt-2 px-3 py-2 border rounded-md"
+                    value={selectedInstallation?.scheduledEnd ? new Date(selectedInstallation.scheduledEnd).toISOString().slice(0, 16) : ""}
+                    onChange={(e) => {
+                      if (selectedInstallation) {
+                        setSelectedInstallation({
+                          ...selectedInstallation,
+                          scheduledEnd: new Date(e.target.value).toISOString()
+                        });
+                      }
+                    }}
+                  />
+                </div>
+              </>
+            )}
 
             {selectedInstallation && (
               <div className="bg-muted p-3 rounded space-y-2 text-sm">
