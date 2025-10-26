@@ -85,7 +85,7 @@ function InstallationBlock({
         <div
           ref={drag as any}
           className={`relative h-[32px] ${colorInfo} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
-            isDragging ? "hidden" : ""
+            isDragging ? "opacity-0 pointer-events-none" : ""
           }`}
           style={{ width: `${width}px`, top: "4px" }}
           onClick={onClick}
