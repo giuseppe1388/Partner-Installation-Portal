@@ -22,6 +22,20 @@
       "when": 1761473851510,
       "tag": "0002_third_katie_power",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1761476148492,
+      "tag": "0003_giant_stone_men",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1761476224809,
+      "tag": "0004_robust_boomerang",
+      "breakpoints": true
     }
   ]
 }

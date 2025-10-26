@@ -125,3 +125,18 @@
 - [x] Aggiungere pulsante "Carica Moduli" nella pagina dettaglio intervento
 - [x] Pulsante apre il link dal campo completionLink del record cliente
 
+
+
+## Fase 18: Aggiunta Pulsanti Navigazione (Google Maps e Waze)
+- [x] Aggiungere campi googleMapsLink e wazeLink allo schema database
+- [x] Aggiungere pulsanti Google Maps e Waze nella technician app
+- [x] Pulsanti aprono i link dal record cliente
+
+
+
+## Fase 19: Generazione Automatica Link Google Maps e Waze
+- [x] Rimuovere campi googleMapsLink e wazeLink dal database
+- [x] Generare link Google Maps automaticamente da installationAddress
+- [x] Generare link Waze automaticamente da installationAddress
+- [x] Mostrare pulsanti nel dialog tecnico senza necessità di link manuali
+

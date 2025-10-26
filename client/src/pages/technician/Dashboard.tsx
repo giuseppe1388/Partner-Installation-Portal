@@ -338,7 +338,31 @@ export default function TechnicianDashboard({ technician, onLogout }: DashboardP
                     <Label className="text-muted-foreground flex items-center gap-1">
                       <MapPin className="w-3 h-3" /> Indirizzo Installazione
                     </Label>
-                    <div className="text-sm">{selectedInstallation.installationAddress}</div>
+                    <div className="text-sm mb-2">{selectedInstallation.installationAddress}</div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const mapsUrl = `https://www.google.com/maps/search/${encodeURIComponent(selectedInstallation.installationAddress)}`;
+                          window.open(mapsUrl, '_blank');
+                        }}
+                      >
+                        <MapPin className="w-3 h-3 mr-1" />
+                        Google Maps
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          const wazeUrl = `https://waze.com/ul?q=${encodeURIComponent(selectedInstallation.installationAddress)}`;
+                          window.open(wazeUrl, '_blank');
+                        }}
+                      >
+                        <MapPin className="w-3 h-3 mr-1" />
+                        Waze
+                      </Button>
+                    </div>
                   </div>
                   {selectedInstallation.durationMinutes && (
                     <div>
