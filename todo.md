@@ -53,3 +53,10 @@
 - [x] Implementare visualizzazione dettaglio installazione (sola lettura)
 - [x] Modificare webhook in uscita per inviare solo date (non Partner/Team ID)
 - [x] Implementare webhook di cancellazione installazione da Salesforce
+
+## Fase 9: Visualizzazione Multi-Squadra Timeline
+- [x] Implementare menu a sinistra con installazioni in attesa
+- [x] Creare visualizzazione timeline/Gantt con tutte le squadre
+- [x] Mostrare slot installazioni per squadra (stile Field Service)
+- [x] Permettere drag-and-drop installazioni negli slot delle squadre
+- [x] Aggiungere controlli navigazione (1/2/3 giorni, avanti/indietro)
