@@ -139,3 +139,31 @@ export const apiConfig = mysqlTable("apiConfig", {
 export type ApiConfig = typeof apiConfig.$inferSelect;
 export type InsertApiConfig = typeof apiConfig.$inferInsert;
 
+/**
+ * Technician table - stores field technicians/installers with login credentials
+ */
+export const technicians = mysqlTable("technicians", {
+  id: int("id").autoincrement().primaryKey(),
+  /** Team ID this technician belongs to */
+  teamId: int("teamId").notNull(),
+  /** Partner ID this technician belongs to */
+  partnerId: int("partnerId").notNull(),
+  /** Technician full name */
+  name: varchar("name", { length: 255 }).notNull(),
+  /** Technician email */
+  email: varchar("email", { length: 320 }),
+  /** Technician phone */
+  phone: varchar("phone", { length: 50 }),
+  /** Username for technician login */
+  username: varchar("username", { length: 100 }).notNull().unique(),
+  /** Hashed password for technician login */
+  passwordHash: text("passwordHash").notNull(),
+  /** Active status */
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Technician = typeof technicians.$inferSelect;
+export type InsertTechnician = typeof technicians.$inferInsert;
+

@@ -241,6 +241,55 @@ export const appRouter = router({
       return updated;
     }),
   }),
+
+  // Technician: Mobile App for field technicians
+  technician: router({
+    // Login
+    login: publicProcedure.input(z.object({
+      username: z.string(),
+      password: z.string(),
+    })).mutation(async ({ input }) => {
+      const technician = await db.verifyTechnicianPassword(input.username, input.password);
+      if (!technician || !technician.isActive) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Credenziali non valide' });
+      }
+
+      return {
+        id: technician.id,
+        name: technician.name,
+        email: technician.email,
+        phone: technician.phone,
+        teamId: technician.teamId,
+        partnerId: technician.partnerId,
+      };
+    }),
+
+    // Get installations for technician's team
+    myInstallations: publicProcedure.input(z.object({ teamId: z.number() })).query(async ({ input }) => {
+      const installations = await db.getInstallationsByTeamId(input.teamId);
+      return installations;
+    }),
+
+    // Get installation detail
+    getInstallation: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      const installation = await db.getInstallationById(input.id);
+      if (!installation) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Installazione non trovata' });
+      }
+      return installation;
+    }),
+
+    // Update installation status
+    updateStatus: publicProcedure.input(z.object({
+      installationId: z.number(),
+      status: z.enum(['pending', 'scheduled', 'in_progress', 'completed', 'cancelled']),
+    })).mutation(async ({ input }) => {
+      const updated = await db.updateInstallation(input.installationId, {
+        status: input.status,
+      });
+      return updated;
+    }),
+  }),
 });
 
 export type AppRouter = typeof appRouter;

@@ -10,6 +10,7 @@ import TeamsPage from "./pages/admin/Teams";
 import InstallationsPage from "./pages/admin/Installations";
 import SettingsPage from "./pages/admin/Settings";
 import PartnerPortal from "./pages/partner/PartnerPortal";
+import TechnicianPortal from "./pages/technician/TechnicianPortal";
 
 function Router() {
   return (
@@ -18,6 +19,7 @@ function Router() {
         <Redirect to="/partner" />
       </Route>
       <Route path={"/partner"} component={PartnerPortal} />
+      <Route path={"/technician"} component={TechnicianPortal} />
       <Route path={"/admin"}>
         <Redirect to="/admin/partners" />
       </Route>

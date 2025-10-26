@@ -67,3 +67,20 @@
 - [x] Mostrare nome cliente/servizio nei blocchi
 - [x] Implementare scroll verticale per molte squadre
 - [x] Migliorare visualizzazione compatta (molte righe visibili)
+
+## Fase 11: Menu Navigazione Partner e Miglioramenti Planner
+- [x] Aggiungere menu navigazione (Planner, Installazioni)
+- [x] Mostrare solo installazioni pending/cancelled nella sidebar planner
+- [x] Aggiungere legenda colori per stati installazioni
+- [x] Aggiungere selezione periodo (Oggi, 3 giorni, 1 settimana)
+- [x] Creare pagina lista installazioni completa con filtri
+- [x] Visualizzare documenti/allegati caricati dai tecnici (preparato per integrazione)
+
+## Fase 12: Technician Mobile App
+- [x] Creare tabella technicians nel database
+- [x] Implementare login tecnici (username/password)
+- [x] Creare interfaccia mobile lista interventi ordinati per ora
+- [x] Implementare selezione data per vedere interventi
+- [x] Creare pagina dettaglio intervento con pulsante "Chiama"
+- [x] Mostrare allegati e link caricamento documenti (Digital Experience)
+- [x] Implementare pulsanti "Inizia Lavoro" e "Completa" per aggiornare stato

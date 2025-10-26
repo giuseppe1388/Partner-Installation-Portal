@@ -14,7 +14,10 @@ import {
   Installation,
   apiConfig,
   InsertApiConfig,
-  ApiConfig
+  ApiConfig,
+  technicians,
+  InsertTechnician,
+  Technician
 } from "../drizzle/schema";
 import { ENV } from './_core/env';
 import * as bcrypt from 'bcrypt';
@@ -322,5 +325,78 @@ export async function deleteApiConfig(configKey: string): Promise<void> {
   if (!db) return;
 
   await db.delete(apiConfig).where(eq(apiConfig.configKey, configKey));
+}
+
+
+// ===== Technician Management =====
+
+export async function createTechnician(technician: InsertTechnician): Promise<Technician> {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(technicians).values(technician);
+  const insertId = Number((result as any).insertId);
+  const [newTechnician] = await db.select().from(technicians).where(eq(technicians.id, insertId));
+  return newTechnician;
+}
+
+export async function getTechnicianByUsername(username: string): Promise<Technician | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(technicians).where(eq(technicians.username, username)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getTechnicianById(id: number): Promise<Technician | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(technicians).where(eq(technicians.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getTechniciansByTeamId(teamId: number): Promise<Technician[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(technicians).where(eq(technicians.teamId, teamId));
+}
+
+export async function getTechniciansByPartnerId(partnerId: number): Promise<Technician[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(technicians).where(eq(technicians.partnerId, partnerId));
+}
+
+export async function updateTechnician(id: number, data: Partial<Omit<Technician, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Technician | undefined> {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  await db.update(technicians).set(data).where(eq(technicians.id, id));
+  return await getTechnicianById(id);
+}
+
+export async function deleteTechnician(id: number): Promise<void> {
+  const db = await getDb();
+  if (!db) return;
+
+  await db.delete(technicians).where(eq(technicians.id, id));
+}
+
+export async function verifyTechnicianPassword(username: string, password: string): Promise<Technician | null> {
+  const technician = await getTechnicianByUsername(username);
+  if (!technician) return null;
+
+  const isValid = await bcrypt.compare(password, technician.passwordHash);
+  return isValid ? technician : null;
+}
+
+export async function getInstallationsByTeamId(teamId: number): Promise<Installation[]> {
+  const db = await getDb();
+  if (!db) return [];
+
+  return await db.select().from(installations).where(eq(installations.teamId, teamId));
 }
 
