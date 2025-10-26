@@ -163,3 +163,9 @@
 - [x] Arrotondare automaticamente l'ora di inizio agli slot di 15 minuti più vicini
 - [x] Testare il drag-and-drop con snapping
 
+## Fase 22: Aggiornamenti Live senza Refresh Pagina
+- [x] Implementare optimistic updates nel planner partner
+- [x] Implementare optimistic updates nella technician app
+- [x] Aggiornare lo stato degli appuntamenti in tempo reale senza refresh
+- [x] Ripristinare i dati in caso di errore
+

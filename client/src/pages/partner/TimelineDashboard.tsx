@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -170,16 +170,21 @@ function TeamRow({
         return;
       }
 
-      // Ottenere la posizione dell'elemento drop (il contenitore della riga)
-      const dropElement = (drop as any).getHandlerId?.();
-      const dropNode = document.querySelector('[data-team-row]');
-      
-      if (!dropNode) {
+      // Trovare l'elemento della riga usando il monitor
+      const dropElement = document.elementFromPoint(clientOffset.x, clientOffset.y);
+      if (!dropElement) {
         onDrop(item.installation, team, date, hours[0], 0);
         return;
       }
 
-      const rect = dropNode.getBoundingClientRect();
+      // Trovare il contenitore della riga (elemento con classe border-b border-r)
+      const rowElement = (dropElement as HTMLElement).closest('.relative.border-b.border-r');
+      if (!rowElement) {
+        onDrop(item.installation, team, date, hours[0], 0);
+        return;
+      }
+
+      const rect = rowElement.getBoundingClientRect();
       const relativeX = clientOffset.x - rect.left;
       
       // Calcolare l'ora e i minuti basati sulla posizione X
@@ -218,7 +223,6 @@ function TeamRow({
   return (
     <div
       ref={drop as any}
-      data-team-row
       className={`relative border-b border-r ${isOver ? "bg-blue-50 dark:bg-blue-950" : ""}`}
       style={{ height: `${ROW_HEIGHT}px`, minWidth: `${hours.length * HOUR_WIDTH}px` }}
     >
@@ -310,24 +314,93 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
   });
 
   const scheduleMutation = trpc.partner.scheduleInstallation.useMutation({
+    onMutate: async (variables) => {
+      // Annulla le query in corso
+      await utils.partner.myInstallations.cancel();
+      
+      // Ottieni i dati precedenti
+      const previousData = utils.partner.myInstallations.getData({
+        partnerId: partner.id,
+      });
+      
+      // Aggiorna i dati in cache in modo optimistico
+      if (previousData) {
+        const startDate = new Date(variables.scheduledStart);
+        const endDate = new Date(variables.scheduledEnd);
+        
+        utils.partner.myInstallations.setData(
+          { partnerId: partner.id },
+          previousData.map((inst) =>
+            inst.id === variables.installationId
+              ? {
+                  ...inst,
+                  status: "scheduled",
+                  scheduledStart: startDate,
+                  scheduledEnd: endDate,
+                  teamId: variables.teamId,
+                }
+              : inst
+          )
+        );
+      }
+      
+      return { previousData };
+    },
     onSuccess: () => {
-      utils.partner.myInstallations.invalidate();
       toast.success("Installazione schedulata con successo");
     },
-    onError: (error: any) => {
+    onError: (error: any, variables, context: any) => {
+      // Ripristina i dati precedenti in caso di errore
+      if (context?.previousData) {
+        utils.partner.myInstallations.setData(
+          { partnerId: partner.id },
+          context.previousData
+        );
+      }
       toast.error(error.message || "Errore nella schedulazione");
     },
   });
 
   const changeStatusMutation = trpc.partner.changeStatus.useMutation({
+    onMutate: async (variables) => {
+      // Annulla le query in corso
+      await utils.partner.myInstallations.cancel();
+      
+      // Ottieni i dati precedenti
+      const previousData = utils.partner.myInstallations.getData({
+        partnerId: partner.id,
+      });
+      
+      // Aggiorna i dati in cache in modo optimistico
+      if (previousData) {
+        utils.partner.myInstallations.setData(
+          { partnerId: partner.id },
+          previousData.map((inst) =>
+            inst.id === variables.installationId
+              ? { ...inst, status: variables.status }
+              : inst
+          )
+        );
+      }
+      
+      return { previousData };
+    },
     onSuccess: () => {
-      utils.partner.myInstallations.invalidate();
       toast.success("Stato aggiornato");
     },
-    onError: (error: any) => {
+    onError: (error: any, variables, context: any) => {
+      // Ripristina i dati precedenti in caso di errore
+      if (context?.previousData) {
+        utils.partner.myInstallations.setData(
+          { partnerId: partner.id },
+          context.previousData
+        );
+      }
       toast.error(error.message || "Errore nell'aggiornamento dello stato");
     },
   });
+
+
 
   // Installazioni da schedulare (pending + cancelled)
   const unscheduledInstallations = useMemo(() => {
