@@ -280,3 +280,11 @@
 - [ ] Associare il PDF alle installazioni
 
 
+
+
+## Fase 33: Visualizzazione Tipo Installazione e Tooltip nel Gantt
+- [x] Mostrare il tipo di installazione nei blocchi del gantt
+- [x] Aggiungere tooltip al passaggio del mouse sui blocchi
+- [x] Tooltip mostra tutti i campi: nome, cognome, tipo, indirizzo, note tecniche, note installatori, telefono, email, durata, stato
+
+

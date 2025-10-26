@@ -22,7 +22,15 @@ const ROW_HEIGHT = 48;
 interface Installation {
   id: number;
   customerName: string;
+  customerSurname?: string | null;
+  customerPhone?: string | null;
+  customerEmail?: string | null;
+  customerCF?: string | null;
+  customerAddress?: string | null;
   installationAddress: string;
+  installationType?: string | null;
+  technicalNotes?: string | null;
+  installerNotes?: string | null;
   durationMinutes?: number | null;
   status: string;
   teamId?: number | null;
@@ -76,14 +84,28 @@ function InstallationBlock({
       <ContextMenuTrigger asChild>
         <div
           ref={drag as any}
-          className={`absolute h-[32px] ${colorInfo} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
+          className={`absolute h-[32px] ${colorInfo} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden group ${
             isDragging ? "opacity-50" : ""
           }`}
           style={{ width: `${width}px`, top: "4px" }}
           onClick={onClick}
         >
           <div className="font-medium truncate">{installation.customerName}</div>
-          <div className="text-[10px] opacity-90 truncate">{installation.installationAddress.substring(0, 30)}...</div>
+          <div className="text-[10px] opacity-90 truncate">{installation.installationType || installation.installationAddress.substring(0, 25)}</div>
+          
+          {/* Tooltip */}
+          <div className="absolute bottom-full left-0 mb-2 w-80 bg-gray-900 text-white text-xs rounded p-3 hidden group-hover:block z-50 whitespace-normal shadow-lg border border-gray-700">
+            <div className="font-semibold mb-1">{installation.customerName} {installation.customerSurname}</div>
+            <div className="text-gray-300 text-[11px] space-y-1">
+              <div><span className="font-semibold">Tipo:</span> {installation.installationType || "N/A"}</div>
+              <div><span className="font-semibold">Indirizzo:</span> {installation.installationAddress}</div>
+              <div><span className="font-semibold">Tel:</span> {installation.customerPhone || "N/A"}</div>
+              <div><span className="font-semibold">Email:</span> {installation.customerEmail || "N/A"}</div>
+              <div><span className="font-semibold">Durata:</span> {installation.durationMinutes || 0} min</div>
+              {installation.technicalNotes && <div><span className="font-semibold">Note tecniche:</span> {installation.technicalNotes}</div>}
+              {installation.installerNotes && <div><span className="font-semibold">Note installatori:</span> {installation.installerNotes}</div>}
+            </div>
+          </div>
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>
