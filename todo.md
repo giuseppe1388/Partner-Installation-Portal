@@ -199,3 +199,7 @@
 - [x] Mantenere la stessa visualizzazione degli appuntamenti nel planner
 - [x] Usare le stesse icone per i pulsanti di navigazione
 
+## Bug da Risolvere
+
+- [x] Il drag-and-drop degli slot "Da Schedulare" non funziona - gli slot non vengono spostati nel calendario
+

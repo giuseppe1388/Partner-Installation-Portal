@@ -364,53 +364,46 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
   }
 
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="flex-1 overflow-hidden flex">
-        {/* Left Sidebar - Unscheduled Installations */}
-        <div className="w-64 border-r overflow-y-auto p-4 space-y-2">
-          <h3 className="font-semibold text-sm">Da Schedulare</h3>
-          <p className="text-xs text-gray-500">Trascina nel calendario</p>
-          {unscheduledInstallations.map((inst) => (
-            <div
-              key={inst.id}
-              className="p-3 bg-gray-100 dark:bg-gray-800 rounded cursor-move hover:bg-gray-200 dark:hover:bg-gray-700 text-sm"
-            >
-              <div className="font-medium">{inst.customerName}</div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">{inst.installationAddress}</div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">{inst.durationMinutes} min</div>
-            </div>
-          ))}
+    <DndProvider backend={HTML5Backend}>
+      <div className="w-full h-full flex flex-col">
+        <div className="flex-1 overflow-hidden flex">
+          {/* Left Sidebar - Unscheduled Installations */}
+          <div className="w-64 border-r overflow-y-auto p-4 space-y-2">
+            <h3 className="font-semibold text-sm">Da Schedulare</h3>
+            <p className="text-xs text-gray-500">Trascina nel calendario</p>
+            {unscheduledInstallations.map((inst) => (
+              <PendingInstallationItem key={inst.id} installation={inst} />
+            ))}
 
-          <div className="mt-8 pt-4 border-t">
-            <h3 className="font-semibold text-sm mb-2">Legenda</h3>
-            <div className="space-y-1 text-xs">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded bg-gray-400" />
-                In Attesa
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded bg-blue-500" />
-                Schedulata
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded bg-yellow-500" />
-                In Corso
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded bg-green-500" />
-                Completata
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded bg-red-500" />
-                Annullata
+            <div className="mt-8 pt-4 border-t">
+              <h3 className="font-semibold text-sm mb-2">Legenda</h3>
+              <div className="space-y-1 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-gray-400" />
+                  In Attesa
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-blue-500" />
+                  Schedulata
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-yellow-500" />
+                  In Corso
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-green-500" />
+                  Completata
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-red-500" />
+                  Annullata
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Main Content - Calendar */}
-        <div className="flex-1 overflow-auto">
-          <DndProvider backend={HTML5Backend}>
+          {/* Main Content - Calendar */}
+          <div className="flex-1 overflow-auto">
             <div className="p-4 space-y-4">
               {/* Date Navigation */}
               <div className="flex items-center justify-between">
@@ -512,9 +505,33 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                 ))}
               </div>
             </div>
-          </DndProvider>
+          </div>
         </div>
       </div>
+    </DndProvider>
+  );
+}
+
+// Pending Installation Item Component
+function PendingInstallationItem({ installation }: { installation: Installation }) {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: ITEM_TYPE,
+    item: { installation },
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
+
+  return (
+    <div
+      ref={drag as any}
+      className={`p-3 bg-gray-100 dark:bg-gray-800 rounded cursor-move hover:bg-gray-200 dark:hover:bg-gray-700 text-sm ${
+        isDragging ? "opacity-50" : ""
+      }`}
+    >
+      <div className="font-medium">{installation.customerName}</div>
+      <div className="text-xs text-gray-600 dark:text-gray-400">{installation.installationAddress}</div>
+      <div className="text-xs text-gray-600 dark:text-gray-400">{installation.durationMinutes} min</div>
     </div>
   );
 }
