@@ -199,6 +199,12 @@
 - [x] Mantenere la stessa visualizzazione degli appuntamenti nel planner
 - [x] Usare le stesse icone per i pulsanti di navigazione
 
+## Fase 26: Aggiungere Stato "Confermato"
+- [x] Aggiungere lo stato "Confermato" agli appuntamenti
+- [x] Aggiungere il colore per lo stato "Confermato" nella legenda
+- [x] Aggiungere l'opzione "Confermato" nel menu di cambio stato
+- [ ] Implementare il webhook a Salesforce quando lo stato diventa "Confermato"
+
 ## Bug da Risolvere
 
 - [x] Il drag-and-drop degli slot "Da Schedulare" non funziona - gli slot non vengono spostati nel calendario

@@ -43,6 +43,7 @@ interface DashboardProps {
 const STATUS_COLORS: Record<string, string> = {
   pending: "bg-gray-400",
   scheduled: "bg-blue-500",
+  confirmed: "bg-purple-500",
   in_progress: "bg-yellow-500",
   completed: "bg-green-500",
   cancelled: "bg-red-500",
@@ -93,6 +94,10 @@ function InstallationBlock({
         <ContextMenuItem onClick={() => onStatusChange?.("scheduled")}>
           <span className="w-2 h-2 rounded-full mr-2 bg-blue-500" />
           Schedulata
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => onStatusChange?.("confirmed")}>
+          <span className="w-2 h-2 rounded-full mr-2 bg-purple-500" />
+          Confermata
         </ContextMenuItem>
         <ContextMenuItem onClick={() => onStatusChange?.("in_progress")}>
           <span className="w-2 h-2 rounded-full mr-2 bg-yellow-500" />
@@ -385,6 +390,10 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded bg-blue-500" />
                   Schedulata
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-purple-500" />
+                  Confermata
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded bg-yellow-500" />

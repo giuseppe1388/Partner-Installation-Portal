@@ -54,7 +54,8 @@ interface Installation {
 const STATUS_COLORS: Record<string, { bg: string; label: string }> = {
   pending: { bg: "bg-yellow-100", label: "In Attesa" },
   scheduled: { bg: "bg-blue-100", label: "Schedulato" },
-  in_progress: { bg: "bg-purple-100", label: "In Corso" },
+  confirmed: { bg: "bg-purple-100", label: "Confermato" },
+  in_progress: { bg: "bg-orange-100", label: "In Corso" },
   completed: { bg: "bg-green-100", label: "Completato" },
   cancelled: { bg: "bg-red-100", label: "Annullato" },
 };
@@ -143,11 +144,12 @@ export default function Installations({ partner }: InstallationsProps) {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Tutti gli stati</SelectItem>
-              <SelectItem value="pending">In Attesa</SelectItem>
-              <SelectItem value="scheduled">Schedulato</SelectItem>
-              <SelectItem value="in_progress">In Corso</SelectItem>
-              <SelectItem value="completed">Completato</SelectItem>
-              <SelectItem value="cancelled">Annullato</SelectItem>
+                <SelectItem value="pending">In Attesa</SelectItem>
+                <SelectItem value="scheduled">Schedulato</SelectItem>
+                <SelectItem value="confirmed">Confermato</SelectItem>
+                <SelectItem value="in_progress">In Corso</SelectItem>
+                <SelectItem value="completed">Completato</SelectItem>
+                <SelectItem value="cancelled">Annullato</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -229,6 +231,7 @@ export default function Installations({ partner }: InstallationsProps) {
                 <SelectContent>
                   <SelectItem value="pending">In Attesa</SelectItem>
                   <SelectItem value="scheduled">Schedulato</SelectItem>
+                  <SelectItem value="confirmed">Confermato</SelectItem>
                   <SelectItem value="in_progress">In Corso</SelectItem>
                   <SelectItem value="completed">Completato</SelectItem>
                   <SelectItem value="cancelled">Annullato</SelectItem>
