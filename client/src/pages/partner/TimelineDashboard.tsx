@@ -236,13 +236,15 @@ function TeamRow({
         <>
           {/* Anteprima del blocco */}
           <div
-            className={`absolute h-[32px] ${STATUS_COLORS[draggedItem.status]} text-white rounded px-2 py-1 opacity-50`}
+            className={`absolute h-[32px] ${STATUS_COLORS[draggedItem.status]} text-white rounded px-2 py-1 opacity-50 flex items-center justify-center text-xs font-semibold`}
             style={{
               left: `${dragPosition.x}px`,
               width: `${(dragPosition.duration / 60) * HOUR_WIDTH}px`,
               top: "4px",
             }}
-          />
+          >
+            {String(dragPosition.hour).padStart(2, '0')}:{String(dragPosition.minute).padStart(2, '0')}
+          </div>
           {/* Linea verticale che mostra dove stai trascinando */}
           <div
             className="absolute top-0 bottom-0 w-0.5 bg-red-500 pointer-events-none"

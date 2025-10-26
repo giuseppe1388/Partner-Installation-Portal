@@ -332,5 +332,6 @@
 - [x] Assicurare che il tooltip sia sempre visibile durante il drag
 - [x] Cambiare da fixed a absolute positioning
 - [x] Aggiungere overflow-visible al contenitore
+- [x] Mostrare l'ora direttamente nel blocco di anteprima durante il drag
 
 
