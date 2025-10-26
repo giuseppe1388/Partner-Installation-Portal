@@ -177,6 +177,8 @@
 
 ## Bug da Risolvere
 
+- [x] Verificare che il calcolo dell'ora di fine sia corretto quando si trascina uno slot con snapping a 15 minuti
+- [x] Verificare che il blocco nel calendario mostri correttamente l'inizio e la fine (es. 12:30-13:30)
 - [ ] Pagina Installazioni deve avere una tabella con ricerca e cambio stato inline
 - [ ] Aggiungere pulsante di ricerca nella tabella Installazioni
 - [ ] Aggiungere possibilità di cambiare stato direttamente dalla tabella Installazioni
