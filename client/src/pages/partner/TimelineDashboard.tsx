@@ -479,7 +479,7 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                     teamRows.forEach(row => {
                       (row as HTMLDivElement).scrollLeft = scrollLeft;
                     });
-                  }}>
+                  }} style={{ scrollBehavior: 'smooth' }}>
                     <div className="flex">
                       {dates.map((date) =>
                         hours.map((hour) => (
@@ -498,13 +498,18 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                 </div>
 
                 {/* Team rows */}
-                <div className="overflow-x-hidden">
+                <div>
                   {teams?.map((team) => (
                     <div key={team.id} className="flex border-b">
                       <div className="w-32 border-r p-2 text-sm font-semibold flex items-center flex-shrink-0 sticky left-0 bg-white dark:bg-gray-950 z-10">
                         {team.name}
                       </div>
-                      <div className="flex flex-1" data-team-row>
+                      <div className="flex flex-1 overflow-x-auto" data-team-row onScroll={(e) => {
+                        const scrollLeft = (e.target as HTMLDivElement).scrollLeft;
+                        if (scrollContainerRef.current) {
+                          scrollContainerRef.current.scrollLeft = scrollLeft;
+                        }
+                      }}>
                         {dates.map((date) => (
                           <TeamRow
                             key={`${team.id}-${format(date, 'yyyy-MM-dd')}`}
