@@ -84,6 +84,8 @@ export const installations = mysqlTable("installations", {
   serviceAppointmentId: varchar("serviceAppointmentId", { length: 255 }).notNull().unique(),
   /** Customer full name */
   customerName: varchar("customerName", { length: 255 }).notNull(),
+  /** Customer surname */
+  customerSurname: varchar("customerSurname", { length: 255 }),
   /** Customer fiscal code */
   customerCF: varchar("customerCF", { length: 50 }),
   /** Customer phone */
@@ -94,12 +96,18 @@ export const installations = mysqlTable("installations", {
   customerAddress: text("customerAddress"),
   /** Installation address (where work will be done) */
   installationAddress: text("installationAddress").notNull(),
+  /** Installation type */
+  installationType: varchar("installationType", { length: 255 }),
   /** Technical notes for installation */
   technicalNotes: text("technicalNotes"),
+  /** Installer notes */
+  installerNotes: text("installerNotes"),
   /** JSON array of image URLs to view */
   imagesToView: text("imagesToView"),
   /** Link to Salesforce Digital Experience for completion */
   completionLink: text("completionLink"),
+  /** PDF attachment URL */
+  pdfUrl: text("pdfUrl"),
   /** Estimated duration in minutes */
   durationMinutes: int("durationMinutes"),
   /** Calculated travel time in minutes (from Google Maps) */

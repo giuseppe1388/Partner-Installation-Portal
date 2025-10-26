@@ -12,15 +12,21 @@ export const webhookRouter = Router();
  * {
  *   "ServiceAppointmentId": "string",
  *   "CustomerName": "string",
+ *   "CustomerSurname": "string",
  *   "CustomerCF": "string",
  *   "CustomerPhone": "string",
  *   "CustomerEmail": "string",
  *   "CustomerAddress": "string",
  *   "InstallationAddress": "string",
+ *   "InstallationType": "string",
  *   "TechnicalNotes": "string",
+ *   "InstallerNotes": "string",
  *   "ImagesToView": ["url1", "url2"],
  *   "CompletionLink": "string",
- *   "DurationMinutes": number
+ *   "PdfUrl": "string",
+ *   "DurationMinutes": number,
+ *   "ScheduledStart": "ISO datetime string",
+ *   "ScheduledEnd": "ISO datetime string"
  * }
  */
 webhookRouter.post('/salesforce', async (req, res) => {
@@ -28,15 +34,21 @@ webhookRouter.post('/salesforce', async (req, res) => {
     const {
       ServiceAppointmentId,
       CustomerName,
+      CustomerSurname,
       CustomerCF,
       CustomerPhone,
       CustomerEmail,
       CustomerAddress,
       InstallationAddress,
+      InstallationType,
       TechnicalNotes,
+      InstallerNotes,
       ImagesToView,
       CompletionLink,
+      PdfUrl,
       DurationMinutes,
+      ScheduledStart,
+      ScheduledEnd,
     } = req.body;
 
     // Validate required fields
@@ -54,15 +66,21 @@ webhookRouter.post('/salesforce', async (req, res) => {
       // Update existing installation
       await db.updateInstallation(existing.id, {
         customerName: CustomerName,
+        customerSurname: CustomerSurname,
         customerCF: CustomerCF,
         customerPhone: CustomerPhone,
         customerEmail: CustomerEmail,
         customerAddress: CustomerAddress,
         installationAddress: InstallationAddress,
+        installationType: InstallationType,
         technicalNotes: TechnicalNotes,
+        installerNotes: InstallerNotes,
         imagesToView: ImagesToView ? JSON.stringify(ImagesToView) : null,
         completionLink: CompletionLink,
+        pdfUrl: PdfUrl,
         durationMinutes: DurationMinutes,
+        scheduledStart: ScheduledStart ? new Date(ScheduledStart) : undefined,
+        scheduledEnd: ScheduledEnd ? new Date(ScheduledEnd) : undefined,
       });
 
       console.log(`[Webhook] Updated installation: ${ServiceAppointmentId}`);
@@ -77,15 +95,21 @@ webhookRouter.post('/salesforce', async (req, res) => {
       const installation = await db.createInstallation({
         serviceAppointmentId: ServiceAppointmentId,
         customerName: CustomerName,
+        customerSurname: CustomerSurname,
         customerCF: CustomerCF,
         customerPhone: CustomerPhone,
         customerEmail: CustomerEmail,
         customerAddress: CustomerAddress,
         installationAddress: InstallationAddress,
+        installationType: InstallationType,
         technicalNotes: TechnicalNotes,
+        installerNotes: InstallerNotes,
         imagesToView: ImagesToView ? JSON.stringify(ImagesToView) : null,
         completionLink: CompletionLink,
+        pdfUrl: PdfUrl,
         durationMinutes: DurationMinutes,
+        scheduledStart: ScheduledStart ? new Date(ScheduledStart) : undefined,
+        scheduledEnd: ScheduledEnd ? new Date(ScheduledEnd) : undefined,
         status: 'pending',
       });
 

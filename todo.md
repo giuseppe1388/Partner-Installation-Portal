@@ -259,3 +259,24 @@
 - [x] Applicare colore tema per coerenza visiva
 
 
+
+
+## Fase 31: Aggiornamento Webhook Salesforce con Nuovi Campi
+- [x] Aggiungere campo Cognome (customerSurname) al database
+- [x] Aggiungere campo Tipo di installazione (installationType) al database
+- [x] Aggiungere campo Note tecniche (technicalNotes) al database
+- [x] Aggiungere campo Note installatori (installerNotes) al database
+- [x] Aggiungere campo Ora di inizio (scheduledStart) al database
+- [x] Aggiungere campo Ora di fine (scheduledEnd) al database
+- [x] Aggiornare endpoint webhook per ricevere i nuovi campi
+- [ ] Visualizzare i nuovi campi nel gantt (tooltip o dialog)
+- [ ] Visualizzare i nuovi campi nella tabella installazioni
+
+## Fase 32: Gestione PDF Allegati ai Clienti
+- [ ] Aggiungere campo PDF (pdfUrl) al database per memorizzare il PDF
+- [ ] Implementare upload PDF nell'interfaccia admin
+- [ ] Permettere visualizzazione/download PDF nell'app partner
+- [ ] Permettere visualizzazione/download PDF nella technician app
+- [ ] Associare il PDF alle installazioni
+
+
