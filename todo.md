@@ -94,3 +94,12 @@
 - [x] Aggiornare ore di fine quando resize
 - [x] Inviare durata modificata nel webhook a Salesforce
 
+
+
+## Fase 15: Menu Contestuale e Gestione Stati
+- [x] Implementare menu contestuale (tasto destro) su appuntamenti
+- [x] Aggiungere opzioni cambio stato nel menu contestuale
+- [x] Implementare stato "Da Confermare" quando sposti uno slot
+- [x] Inviare webhook a Salesforce quando cambio stato a "Schedulato"
+- [x] Webhook include: Service Appointment ID, Start DateTime, End DateTime
+

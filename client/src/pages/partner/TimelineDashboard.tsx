@@ -25,6 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { LogOut, Loader2, Clock, MapPin, FileText, Phone, Mail, User, ChevronLeft, ChevronRight, Calendar, List } from "lucide-react";
 import { toast } from "sonner";
 import { APP_TITLE, APP_LOGO } from "@/const";
@@ -73,15 +79,17 @@ const STATUS_COLORS: Record<string, { bg: string; label: string; color: string }
   cancelled: { bg: "bg-red-500", label: "Annullata", color: "#EF4444" },
 };
 
-// Installation Block Component with Resize
+// Installation Block Component with Resize and Context Menu
 function InstallationBlock({
   installation,
   onClick,
   onResize,
+  onStatusChange,
 }: {
   installation: Installation;
   onClick: () => void;
   onResize?: (newDurationMinutes: number) => void;
+  onStatusChange?: (status: string) => void;
 }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ITEM_TYPE,
@@ -103,26 +111,52 @@ function InstallationBlock({
   };
 
   return (
-    <Resizable
-      width={width}
-      height={32}
-      onResize={handleResize}
-      minConstraints={[HOUR_WIDTH * 0.5, 32]}
-      maxConstraints={[HOUR_WIDTH * 8, 32]}
-      resizeHandles={["e"]}
-    >
-      <div
-        ref={drag as any}
-        className={`absolute h-[32px] ${colorInfo.bg} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
-          isDragging ? "opacity-50" : ""
-        }`}
-        style={{ width: `${width}px`, top: "4px" }}
-        onClick={onClick}
-      >
-        <div className="font-medium truncate">{installation.customerName}</div>
-        <div className="text-[10px] opacity-90 truncate">{installation.installationAddress.substring(0, 30)}...</div>
-      </div>
-    </Resizable>
+    <ContextMenu>
+      <ContextMenuTrigger asChild>
+        <Resizable
+          width={width}
+          height={32}
+          onResize={handleResize}
+          minConstraints={[HOUR_WIDTH * 0.5, 32]}
+          maxConstraints={[HOUR_WIDTH * 8, 32]}
+          resizeHandles={["e"]}
+        >
+          <div
+            ref={drag as any}
+            className={`absolute h-[32px] ${colorInfo.bg} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
+              isDragging ? "opacity-50" : ""
+            }`}
+            style={{ width: `${width}px`, top: "4px" }}
+            onClick={onClick}
+          >
+            <div className="font-medium truncate">{installation.customerName}</div>
+            <div className="text-[10px] opacity-90 truncate">{installation.installationAddress.substring(0, 30)}...</div>
+          </div>
+        </Resizable>
+      </ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem onClick={() => onStatusChange?.("pending")}>
+          <span className="w-2 h-2 rounded-full mr-2 bg-gray-500" />
+          In Attesa
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => onStatusChange?.("scheduled")}>
+          <span className="w-2 h-2 rounded-full mr-2 bg-blue-500" />
+          Schedulata
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => onStatusChange?.("in_progress")}>
+          <span className="w-2 h-2 rounded-full mr-2 bg-yellow-500" />
+          In Corso
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => onStatusChange?.("completed")}>
+          <span className="w-2 h-2 rounded-full mr-2 bg-green-500" />
+          Completata
+        </ContextMenuItem>
+        <ContextMenuItem onClick={() => onStatusChange?.("cancelled")}>
+          <span className="w-2 h-2 rounded-full mr-2 bg-red-500" />
+          Annullata
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
 
@@ -135,6 +169,7 @@ function TeamRow({
   onDrop,
   onBlockClick,
   onResize,
+  onStatusChange,
 }: {
   team: Team;
   date: Date;
@@ -143,6 +178,7 @@ function TeamRow({
   onDrop: (installation: Installation, team: Team, date: Date, hour: number) => void;
   onBlockClick: (installation: Installation) => void;
   onResize?: (installationId: number, newDurationMinutes: number) => void;
+  onStatusChange?: (installationId: number, status: string) => void;
 }) {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: ITEM_TYPE,
@@ -179,6 +215,9 @@ function TeamRow({
               onClick={() => onBlockClick(inst)}
               onResize={(newDurationMinutes) => {
                 onResize?.(inst.id, newDurationMinutes);
+              }}
+              onStatusChange={(newStatus) => {
+                onStatusChange?.(inst.id, newStatus);
               }}
             />
           </div>
@@ -268,6 +307,16 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
     },
   });
 
+  const changeStatusMutation = trpc.partner.changeStatus.useMutation({
+    onSuccess: () => {
+      utils.partner.myInstallations.invalidate();
+      toast.success("Stato aggiornato");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Errore nell'aggiornamento dello stato");
+    },
+  });
+
   // Installazioni da schedulare (pending + cancelled)
   const unscheduledInstallations = useMemo(() => {
     if (!installations) return [];
@@ -319,6 +368,13 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
     updateDurationMutation.mutate({
       installationId,
       durationMinutes: newDurationMinutes,
+    });
+  };
+
+  const handleStatusChange = (installationId: number, status: string) => {
+    changeStatusMutation.mutate({
+      installationId,
+      status: status as any,
     });
   };
 
@@ -534,6 +590,7 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                                 setIsDetailDialogOpen(true);
                               }}
                               onResize={handleResize}
+                              onStatusChange={handleStatusChange}
                             />
                           ))}
                         </div>

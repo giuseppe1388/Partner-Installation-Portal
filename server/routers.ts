@@ -265,6 +265,30 @@ export const appRouter = router({
 
       return updated;
     }),
+
+    changeStatus: publicProcedure.input(z.object({
+      installationId: z.number(),
+      status: z.enum(['pending', 'scheduled', 'in_progress', 'completed', 'cancelled']),
+    })).mutation(async ({ input }) => {
+      const installation = await db.getInstallationById(input.installationId);
+      if (!installation) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Installation not found' });
+      }
+
+      const updated = await db.updateInstallation(input.installationId, {
+        status: input.status,
+      });
+
+      // Send webhook to Salesforce when status changes to 'scheduled'
+      if (input.status === 'scheduled' && installation.scheduledStart && installation.scheduledEnd) {
+        const webhookSent = await sendScheduleToSalesforce(input.installationId);
+        if (!webhookSent) {
+          console.warn('[Partner] Failed to send webhook to Salesforce for installation:', input.installationId);
+        }
+      }
+
+      return updated;
+    }),
   }),
 
   // Technician: Mobile App for field technicians
