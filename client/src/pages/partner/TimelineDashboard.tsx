@@ -536,29 +536,23 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                   }} style={{ scrollBehavior: 'smooth' }}>
                     <div className="flex">
                       {dates.map((date) => (
-                        <div key={format(date, 'yyyy-MM-dd')} className="flex border-r">
-                          {/* Data header */}
-                          <div
-                            className="border-r p-2 text-xs font-semibold text-center bg-gray-50 dark:bg-gray-900"
-                            style={{ width: `${HOUR_WIDTH * hours.length}px` }}
-                          >
+                        <div key={format(date, 'yyyy-MM-dd')} className="flex flex-col border-r" style={{ width: `${HOUR_WIDTH * hours.length}px` }}>
+                          <div className="border-b p-2 text-xs font-semibold text-center bg-gray-50 dark:bg-gray-900">
                             {format(date, "EEEE, d MMMM yyyy", { locale: it })}
+                          </div>
+                          <div className="flex">
+                            {hours.map((hour) => (
+                              <div
+                                key={`${format(date, 'yyyy-MM-dd')}-${hour}`}
+                                className="border-r p-2 text-xs font-semibold text-center"
+                                style={{ width: `${HOUR_WIDTH}px` }}
+                              >
+                                {hour}:00
+                              </div>
+                            ))}
                           </div>
                         </div>
                       ))}
-                    </div>
-                    <div className="flex">
-                      {dates.map((date) =>
-                        hours.map((hour) => (
-                          <div
-                            key={`${format(date, 'yyyy-MM-dd')}-${hour}`}
-                            className="border-r p-2 text-xs font-semibold text-center"
-                            style={{ width: `${HOUR_WIDTH}px` }}
-                          >
-                            <div>{hour}:00</div>
-                          </div>
-                        ))
-                      )}
                     </div>
                   </div>
                 </div>
