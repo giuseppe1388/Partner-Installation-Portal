@@ -470,8 +470,8 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
               {/* Calendar Grid */}
               <div className="border rounded-lg overflow-hidden">
                 {/* Header with hours */}
-                <div className="flex border-b bg-gray-50 dark:bg-gray-900">
-                  <div className="w-32 border-r p-2 text-sm font-semibold">Squadre</div>
+                <div className="flex border-b bg-gray-50 dark:bg-gray-900 overflow-x-auto">
+                  <div className="w-32 border-r p-2 text-sm font-semibold flex-shrink-0">Squadre</div>
                   <div className="flex">
                     {dates.map((date) =>
                       hours.map((hour) => (
@@ -491,10 +491,10 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                 {/* Team rows */}
                 {teams?.map((team) => (
                   <div key={team.id} className="flex border-b">
-                    <div className="w-32 border-r p-2 text-sm font-semibold flex items-center">
+                    <div className="w-32 border-r p-2 text-sm font-semibold flex items-center flex-shrink-0">
                       {team.name}
                     </div>
-                    <div className="flex">
+                    <div className="flex overflow-x-auto">
                       {dates.map((date) => (
                         <TeamRow
                           key={`${team.id}-${format(date, 'yyyy-MM-dd')}`}
@@ -531,16 +531,24 @@ function PendingInstallationItem({ installation }: { installation: Installation 
     }),
   }));
 
+  // Assegna un colore basato sul nome per renderlo più visibile
+  const colors = [
+    "bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 border-2 border-blue-300 dark:border-blue-700",
+    "bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 border-2 border-purple-300 dark:border-purple-700",
+    "bg-pink-100 dark:bg-pink-900 hover:bg-pink-200 dark:hover:bg-pink-800 border-2 border-pink-300 dark:border-pink-700",
+  ];
+  const colorIndex = installation.id % colors.length;
+
   return (
     <div
       ref={drag as any}
-      className={`p-3 bg-gray-100 dark:bg-gray-800 rounded cursor-move hover:bg-gray-200 dark:hover:bg-gray-700 text-sm ${
+      className={`p-3 ${colors[colorIndex]} rounded cursor-move text-sm font-medium ${
         isDragging ? "opacity-50" : ""
       }`}
     >
-      <div className="font-medium">{installation.customerName}</div>
-      <div className="text-xs text-gray-600 dark:text-gray-400">{installation.installationAddress}</div>
-      <div className="text-xs text-gray-600 dark:text-gray-400">{installation.durationMinutes} min</div>
+      <div className="font-medium text-gray-900 dark:text-white">{installation.customerName}</div>
+      <div className="text-xs text-gray-700 dark:text-gray-300">{installation.installationAddress}</div>
+      <div className="text-xs text-gray-700 dark:text-gray-300">{installation.durationMinutes} min</div>
     </div>
   );
 }

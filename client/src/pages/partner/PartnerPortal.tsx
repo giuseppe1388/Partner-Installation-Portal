@@ -70,31 +70,33 @@ export default function PartnerPortal() {
           <p className="text-sm font-semibold">{partner.name}</p>
         </div>
         {/* Navigation Menu */}
-        <nav className="flex-1 p-3">
-          <Button
-            variant={activeView === "planner" ? "default" : "ghost"}
-            className="w-full justify-start mb-2"
-            onClick={() => setActiveView("planner")}
-          >
-            <Calendar className="w-4 h-4 mr-2" />
-            Planner
-          </Button>
-          <Button
-            variant={activeView === "installations" ? "default" : "ghost"}
-            className="w-full justify-start"
-            onClick={() => setActiveView("installations")}
-          >
-            <List className="w-4 h-4 mr-2" />
-            Installazioni
-          </Button>
+        <nav className="flex-1 p-3 flex flex-col">
+          <div className="flex-1">
+            <Button
+              variant={activeView === "planner" ? "default" : "ghost"}
+              className="w-full justify-start mb-2"
+              onClick={() => setActiveView("planner")}
+            >
+              <Calendar className="w-4 h-4 mr-2" />
+              Planner
+            </Button>
+            <Button
+              variant={activeView === "installations" ? "default" : "ghost"}
+              className="w-full justify-start"
+              onClick={() => setActiveView("installations")}
+            >
+              <List className="w-4 h-4 mr-2" />
+              Installazioni
+            </Button>
+          </div>
+          {/* Logout at bottom */}
+          <div className="border-t pt-3">
+            <Button variant="outline" className="w-full justify-start" onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Esci
+            </Button>
+          </div>
         </nav>
-        {/* Logout */}
-        <div className="p-3 border-t">
-          <Button variant="outline" className="w-full justify-start" onClick={handleLogout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Esci
-          </Button>
-        </div>
       </div>
 
       {/* Main Content */}

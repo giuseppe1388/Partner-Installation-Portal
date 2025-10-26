@@ -230,3 +230,11 @@
 - [x] Aggiungere colonna con data di inizio e fine nella tabella Installazioni
 - [x] Permettere di cambiare la data oltre allo stato nel dialog di cambio stato
 
+
+
+## Bug da Risolvere (Continua 2)
+
+- [x] Aggiungere scroll orizzontale sul gantt per scorrere a destra
+- [x] Spostare il pulsante Esci in basso nel menu a sinistra
+- [x] Cambiare i colori grigio delle installazioni da trascinare (renderli più visibili)
+
