@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO partners (salesforcePartnerId, name, email, phone, startingAddress, username, passwordHash, isActive) VALUES ('DEMO001', 'Partner Demo', 'demo@example.com', '+39 123 456 7890', 'Via Roma 1, Milano, 20100', 'demo', '$2b$10$pjdPehsD3jH9BQ8PZLF1cOOtdEMWTxw0XFtFKqf5y9r80hV7OIjUK', 1);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gnoqwjMueUiDos.ce00c89cbc3c --database 4uM68RE253EuzAdgQRhHTs --execute INSERT INTO partners (salesforcePartnerId, name, email, phone, startingAddress, username, passwordHash, isActive) VALUES ('DEMO001', 'Partner Demo', 'demo@example.com', '+39 123 456 7890', 'Via Roma 1, Milano, 20100', 'demo', '$2b$10$pjdPehsD3jH9BQ8PZLF1cOOtdEMWTxw0XFtFKqf5y9r80hV7OIjUK', 1);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 62
+}

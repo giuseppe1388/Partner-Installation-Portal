@@ -4,8 +4,6 @@ interface ScheduleWebhookPayload {
   ServiceAppointmentId: string;
   StartDateTime: string;
   EndDateTime: string;
-  PartnerId: string;
-  TeamId: string;
 }
 
 /**
@@ -45,13 +43,11 @@ export async function sendScheduleToSalesforce(installationId: number): Promise<
 
     const webhookUrl = webhookConfig.configValue;
 
-    // Prepare payload
+    // Prepare payload (only dates, Partner and Team are managed in Salesforce)
     const payload: ScheduleWebhookPayload = {
       ServiceAppointmentId: installation.serviceAppointmentId,
       StartDateTime: new Date(installation.scheduledStart).toISOString(),
       EndDateTime: new Date(installation.scheduledEnd).toISOString(),
-      PartnerId: partner.salesforcePartnerId,
-      TeamId: team.salesforceTeamId,
     };
 
     console.log('[SalesforceWebhook] Sending payload to Salesforce:', payload);

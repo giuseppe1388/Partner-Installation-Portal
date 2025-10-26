@@ -47,3 +47,9 @@
 - [x] Test interfaccia admin
 - [x] Test interfaccia partner
 - [x] Documentazione API e configurazione
+
+## Fase 8: Miglioramenti Interfaccia Partner
+- [x] Aggiungere modulo a sinistra con lista completa installazioni
+- [x] Implementare visualizzazione dettaglio installazione (sola lettura)
+- [x] Modificare webhook in uscita per inviare solo date (non Partner/Team ID)
+- [x] Implementare webhook di cancellazione installazione da Salesforce

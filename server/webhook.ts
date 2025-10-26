@@ -107,6 +107,58 @@ webhookRouter.post('/salesforce', async (req, res) => {
 });
 
 /**
+ * Webhook endpoint to delete installation when partner changes in Salesforce
+ * POST /api/webhook/salesforce/delete
+ * 
+ * Expected payload:
+ * {
+ *   "ServiceAppointmentId": "string"
+ * }
+ */
+webhookRouter.post('/salesforce/delete', async (req, res) => {
+  try {
+    const { ServiceAppointmentId } = req.body;
+
+    if (!ServiceAppointmentId) {
+      return res.status(400).json({
+        success: false,
+        error: 'ServiceAppointmentId is required',
+      });
+    }
+
+    console.log('[Webhook Delete] Received delete request for:', ServiceAppointmentId);
+
+    // Find installation by ServiceAppointmentId
+    const installation = await db.getInstallationByServiceAppointmentId(ServiceAppointmentId);
+    
+    if (!installation) {
+      console.warn('[Webhook Delete] Installation not found:', ServiceAppointmentId);
+      return res.status(404).json({
+        success: false,
+        error: 'Installation not found',
+      });
+    }
+
+    // Delete installation
+    await db.deleteInstallation(installation.id);
+
+    console.log('[Webhook Delete] Deleted installation:', installation.id);
+    
+    return res.json({
+      success: true,
+      message: 'Installation deleted successfully',
+      installationId: installation.id,
+    });
+  } catch (error) {
+    console.error('[Webhook Delete] Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
+  }
+});
+
+/**
  * Helper endpoint to test webhook functionality
  * POST /api/webhook/test
  */

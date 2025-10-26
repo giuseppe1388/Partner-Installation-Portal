@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO installations (serviceAppointmentId, customerName, customerCF, customerPhone, customerEmail, customerAddress, installationAddress, technicalNotes, durationMinutes, status) VALUES ('SA-TEST-001', 'Mario Rossi', 'RSSMRA80A01H501U', '+39 333 123 4567', 'mario.rossi@example.com', 'Via Garibaldi 5, Milano, 20121', 'Via Verdi 10, Milano, 20121', 'Installazione standard - Test', 120, 'pending');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gnoqwjMueUiDos.ce00c89cbc3c --database 4uM68RE253EuzAdgQRhHTs --execute INSERT INTO installations (serviceAppointmentId, customerName, customerCF, customerPhone, customerEmail, customerAddress, installationAddress, technicalNotes, durationMinutes, status) VALUES ('SA-TEST-001', 'Mario Rossi', 'RSSMRA80A01H501U', '+39 333 123 4567', 'mario.rossi@example.com', 'Via Garibaldi 5, Milano, 20121', 'Via Verdi 10, Milano, 20121', 'Installazione standard - Test', 120, 'pending');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 65
+}

@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO teams (salesforceTeamId, partnerId, name, description, isActive) VALUES ('TEAM001', 1, 'Squadra 1', 'Squadra di test', 1);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gnoqwjMueUiDos.ce00c89cbc3c --database 4uM68RE253EuzAdgQRhHTs --execute INSERT INTO teams (salesforceTeamId, partnerId, name, description, isActive) VALUES ('TEAM001', 1, 'Squadra 1', 'Squadra di test', 1);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 57
+}
