@@ -2,7 +2,6 @@ import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
-import { Resizable, ResizeCallbackData } from "react-resizable";
 import { format, addDays, startOfDay, parseISO } from "date-fns";
 import { it } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -79,16 +79,14 @@ const STATUS_COLORS: Record<string, { bg: string; label: string; color: string }
   cancelled: { bg: "bg-red-500", label: "Annullata", color: "#EF4444" },
 };
 
-// Installation Block Component with Resize and Context Menu
+// Installation Block Component
 function InstallationBlock({
   installation,
   onClick,
-  onResize,
   onStatusChange,
 }: {
   installation: Installation;
   onClick: () => void;
-  onResize?: (newDurationMinutes: number) => void;
   onStatusChange?: (status: string) => void;
 }) {
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -103,36 +101,20 @@ function InstallationBlock({
   const width = durationHours * HOUR_WIDTH;
   const colorInfo = STATUS_COLORS[installation.status] || STATUS_COLORS.pending;
 
-  const handleResize = (event: React.SyntheticEvent, data: ResizeCallbackData) => {
-    const newWidth = data.size.width;
-    const newDurationHours = newWidth / HOUR_WIDTH;
-    const newDurationMinutes = Math.round(newDurationHours * 60);
-    onResize?.(newDurationMinutes);
-  };
-
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
-        <Resizable
-          width={width}
-          height={32}
-          onResize={handleResize}
-          minConstraints={[HOUR_WIDTH * 0.5, 32]}
-          maxConstraints={[HOUR_WIDTH * 8, 32]}
-          resizeHandles={["e"]}
+        <div
+          ref={drag as any}
+          className={`absolute h-[32px] ${colorInfo.bg} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
+            isDragging ? "opacity-50" : ""
+          }`}
+          style={{ width: `${width}px`, top: "4px" }}
+          onClick={onClick}
         >
-          <div
-            ref={drag as any}
-            className={`absolute h-[32px] ${colorInfo.bg} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
-              isDragging ? "opacity-50" : ""
-            }`}
-            style={{ width: `${width}px`, top: "4px" }}
-            onClick={onClick}
-          >
-            <div className="font-medium truncate">{installation.customerName}</div>
-            <div className="text-[10px] opacity-90 truncate">{installation.installationAddress.substring(0, 30)}...</div>
-          </div>
-        </Resizable>
+          <div className="font-medium truncate">{installation.customerName}</div>
+          <div className="text-[10px] opacity-90 truncate">{installation.installationAddress.substring(0, 30)}...</div>
+        </div>
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuItem onClick={() => onStatusChange?.("pending")}>
@@ -168,7 +150,6 @@ function TeamRow({
   hours,
   onDrop,
   onBlockClick,
-  onResize,
   onStatusChange,
 }: {
   team: Team;
@@ -177,7 +158,6 @@ function TeamRow({
   hours: number[];
   onDrop: (installation: Installation, team: Team, date: Date, hour: number) => void;
   onBlockClick: (installation: Installation) => void;
-  onResize?: (installationId: number, newDurationMinutes: number) => void;
   onStatusChange?: (installationId: number, status: string) => void;
 }) {
   const [{ isOver }, drop] = useDrop(() => ({
@@ -213,9 +193,6 @@ function TeamRow({
             <InstallationBlock 
               installation={inst} 
               onClick={() => onBlockClick(inst)}
-              onResize={(newDurationMinutes) => {
-                onResize?.(inst.id, newDurationMinutes);
-              }}
               onStatusChange={(newStatus) => {
                 onStatusChange?.(inst.id, newStatus);
               }}
@@ -272,6 +249,11 @@ function PendingInstallation({ installation, onClick }: { installation: Installa
 export default function TimelineDashboard({ partner, onLogout }: DashboardProps) {
   const [selectedInstallation, setSelectedInstallation] = useState<Installation | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [isEditDateDialogOpen, setIsEditDateDialogOpen] = useState(false);
+  const [editStartDate, setEditStartDate] = useState("");
+  const [editStartTime, setEditStartTime] = useState("");
+  const [editEndDate, setEditEndDate] = useState("");
+  const [editEndTime, setEditEndTime] = useState("");
   const [currentDate, setCurrentDate] = useState(startOfDay(new Date()));
   const [daysToShow, setDaysToShow] = useState(1);
   const [activeView, setActiveView] = useState<"planner" | "installations">("planner");
@@ -294,16 +276,6 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
     },
     onError: (error: any) => {
       toast.error(error.message || "Errore nella schedulazione");
-    },
-  });
-
-  const updateDurationMutation = trpc.partner.updateInstallationDuration.useMutation({
-    onSuccess: () => {
-      utils.partner.myInstallations.invalidate();
-      toast.success("Durata aggiornata");
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Errore nell'aggiornamento");
     },
   });
 
@@ -364,18 +336,65 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
     });
   };
 
-  const handleResize = (installationId: number, newDurationMinutes: number) => {
-    updateDurationMutation.mutate({
-      installationId,
-      durationMinutes: newDurationMinutes,
-    });
-  };
-
   const handleStatusChange = (installationId: number, status: string) => {
     changeStatusMutation.mutate({
       installationId,
       status: status as any,
     });
+  };
+
+  const handleEditDates = () => {
+    if (!selectedInstallation || !editStartDate || !editStartTime || !editEndDate || !editEndTime) {
+      toast.error("Compila tutti i campi");
+      return;
+    }
+
+    const startDateTime = new Date(`${editStartDate}T${editStartTime}`);
+    const endDateTime = new Date(`${editEndDate}T${editEndTime}`);
+
+    if (startDateTime >= endDateTime) {
+      toast.error("L'ora di inizio deve essere prima dell'ora di fine");
+      return;
+    }
+
+    scheduleMutation.mutate({
+      installationId: selectedInstallation.id,
+      partnerId: partner.id,
+      teamId: selectedInstallation.teamId || 0,
+      scheduledStart: startDateTime.toISOString(),
+      scheduledEnd: endDateTime.toISOString(),
+    });
+
+    setIsEditDateDialogOpen(false);
+    setIsDetailDialogOpen(false);
+  };
+
+  const openDetailDialog = (installation: Installation) => {
+    setSelectedInstallation(installation);
+    setIsDetailDialogOpen(true);
+  };
+
+  const openEditDateDialog = () => {
+    if (!selectedInstallation) return;
+
+    const startDate = selectedInstallation.scheduledStart
+      ? typeof selectedInstallation.scheduledStart === 'string'
+        ? parseISO(selectedInstallation.scheduledStart)
+        : selectedInstallation.scheduledStart
+      : new Date();
+
+    const endDate = selectedInstallation.scheduledEnd
+      ? typeof selectedInstallation.scheduledEnd === 'string'
+        ? parseISO(selectedInstallation.scheduledEnd)
+        : selectedInstallation.scheduledEnd
+      : new Date();
+
+    setEditStartDate(format(startDate, 'yyyy-MM-dd'));
+    setEditStartTime(format(startDate, 'HH:mm'));
+    setEditEndDate(format(endDate, 'yyyy-MM-dd'));
+    setEditEndTime(format(endDate, 'HH:mm'));
+    setIsDetailDialogOpen(false);
+    setIsEditDateDialogOpen(true);
   };
 
   const getStatusBadge = (status: string) => {
@@ -458,10 +477,7 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                         <PendingInstallation
                           key={installation.id}
                           installation={installation}
-                          onClick={() => {
-                            setSelectedInstallation(installation);
-                            setIsDetailDialogOpen(true);
-                          }}
+                          onClick={() => openDetailDialog(installation)}
                         />
                       ))
                     )}
@@ -585,11 +601,7 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                               installations={scheduledInstallations}
                               hours={hours}
                               onDrop={handleDrop}
-                              onBlockClick={(inst) => {
-                                setSelectedInstallation(inst);
-                                setIsDetailDialogOpen(true);
-                              }}
-                              onResize={handleResize}
+                              onBlockClick={openDetailDialog}
                               onStatusChange={handleStatusChange}
                             />
                           ))}
@@ -630,10 +642,7 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                       <Card
                         key={installation.id}
                         className="cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={() => {
-                          setSelectedInstallation(installation);
-                          setIsDetailDialogOpen(true);
-                        }}
+                        onClick={() => openDetailDialog(installation)}
                       >
                         <CardHeader className="pb-3">
                           <div className="flex items-start justify-between">
@@ -820,6 +829,67 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsDetailDialogOpen(false)}>
                 Chiudi
+              </Button>
+              {selectedInstallation?.scheduledStart && (
+                <Button onClick={openEditDateDialog}>
+                  Modifica Date
+                </Button>
+              )}
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Edit Date Dialog */}
+        <Dialog open={isEditDateDialogOpen} onOpenChange={setIsEditDateDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Modifica Data e Ora</DialogTitle>
+              <DialogDescription>Modifica la data e l'ora di inizio e fine</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <Label htmlFor="start-date">Data Inizio</Label>
+                <Input
+                  id="start-date"
+                  type="date"
+                  value={editStartDate}
+                  onChange={(e) => setEditStartDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="start-time">Ora Inizio</Label>
+                <Input
+                  id="start-time"
+                  type="time"
+                  value={editStartTime}
+                  onChange={(e) => setEditStartTime(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="end-date">Data Fine</Label>
+                <Input
+                  id="end-date"
+                  type="date"
+                  value={editEndDate}
+                  onChange={(e) => setEditEndDate(e.target.value)}
+                />
+              </div>
+              <div>
+                <Label htmlFor="end-time">Ora Fine</Label>
+                <Input
+                  id="end-time"
+                  type="time"
+                  value={editEndTime}
+                  onChange={(e) => setEditEndTime(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsEditDateDialogOpen(false)}>
+                Annulla
+              </Button>
+              <Button onClick={handleEditDates}>
+                Salva
               </Button>
             </DialogFooter>
           </DialogContent>

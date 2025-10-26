@@ -103,3 +103,13 @@
 - [x] Inviare webhook a Salesforce quando cambio stato a "Schedulato"
 - [x] Webhook include: Service Appointment ID, Start DateTime, End DateTime
 
+
+
+## Fase 16: Miglioramenti Cambio Stato e Modifica Date
+- [x] Inviare webhook di cancellazione a Salesforce quando stato = "Cancelled"
+- [x] Rimuovere appuntamento dallo slot quando stato = "Cancelled"
+- [x] Rimuovere funzionalità resize dei blocchi
+- [x] Aggiungere dialog per modificare data/ora inizio e fine
+- [x] Permettere modifica solo di start/end datetime (non durata)
+- [x] Aggiornare webhook a Salesforce quando modifichi le date
+

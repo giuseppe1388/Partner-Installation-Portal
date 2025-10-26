@@ -6,7 +6,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import * as db from "./db";
 import { calculateTravelTimeForPartner } from "./googleMaps";
-import { sendScheduleToSalesforce } from "./salesforceWebhook";
+import { sendScheduleToSalesforce, sendCancellationToSalesforce } from "./salesforceWebhook";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -284,6 +284,14 @@ export const appRouter = router({
         const webhookSent = await sendScheduleToSalesforce(input.installationId);
         if (!webhookSent) {
           console.warn('[Partner] Failed to send webhook to Salesforce for installation:', input.installationId);
+        }
+      }
+
+      // Send cancellation webhook to Salesforce when status changes to 'cancelled'
+      if (input.status === 'cancelled') {
+        const webhookSent = await sendCancellationToSalesforce(input.installationId);
+        if (!webhookSent) {
+          console.warn('[Partner] Failed to send cancellation webhook to Salesforce for installation:', input.installationId);
         }
       }
 

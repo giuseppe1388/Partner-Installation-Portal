@@ -76,3 +76,56 @@ export async function sendScheduleToSalesforce(installationId: number): Promise<
   }
 }
 
+
+
+/**
+ * Send cancellation data to Salesforce webhook
+ * @param installationId Installation ID
+ * @returns Success status
+ */
+export async function sendCancellationToSalesforce(installationId: number): Promise<boolean> {
+  try {
+    const installation = await db.getInstallationById(installationId);
+    if (!installation) {
+      console.error('[SalesforceWebhook] Installation not found:', installationId);
+      return false;
+    }
+
+    const webhookConfig = await db.getApiConfig('salesforce_webhook_url');
+    if (!webhookConfig || !webhookConfig.configValue) {
+      console.warn('[SalesforceWebhook] Salesforce webhook URL not configured');
+      return false;
+    }
+
+    const webhookUrl = webhookConfig.configValue;
+
+    const payload = {
+      ServiceAppointmentId: installation.serviceAppointmentId,
+      Status: 'Cancelled',
+    };
+
+    console.log('[SalesforceWebhook] Sending cancellation payload to Salesforce:', payload);
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      console.error('[SalesforceWebhook] Failed to send cancellation webhook:', response.statusText);
+      return false;
+    }
+
+    const responseData = await response.json();
+    console.log('[SalesforceWebhook] Cancellation webhook sent successfully:', responseData);
+
+    return true;
+  } catch (error) {
+    console.error('[SalesforceWebhook] Error sending cancellation webhook to Salesforce:', error);
+    return false;
+  }
+}
+
