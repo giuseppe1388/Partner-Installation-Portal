@@ -296,3 +296,11 @@
 - [x] Verificare che i dati vengano passati dal backend al frontend
 
 
+
+
+## Fase 34: Popup Dettagli Installazione al Click
+- [x] Rimuovere tooltip al hover
+- [x] Aggiungere popup modale al click su blocco gantt
+- [x] Popup mostra tutti i dettagli: nome, cognome, tipo, indirizzo, note tecniche, note installatori, telefono, email, durata, stato
+
+

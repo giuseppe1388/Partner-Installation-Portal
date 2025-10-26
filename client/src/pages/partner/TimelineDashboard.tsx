@@ -84,7 +84,7 @@ function InstallationBlock({
       <ContextMenuTrigger asChild>
         <div
           ref={drag as any}
-          className={`relative h-[32px] ${colorInfo} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-visible group ${
+          className={`relative h-[32px] ${colorInfo} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
             isDragging ? "opacity-50" : ""
           }`}
           style={{ width: `${width}px`, top: "4px" }}
@@ -92,27 +92,6 @@ function InstallationBlock({
         >
           <div className="font-medium truncate">{installation.customerName}</div>
           <div className="text-[10px] opacity-90 truncate">{installation.installationType || installation.installationAddress.substring(0, 25)}</div>
-          
-          {/* Tooltip */}
-          <div className="fixed hidden group-hover:block z-[9999] bg-gray-900 text-white text-xs rounded p-3 shadow-lg border border-gray-700 w-80 whitespace-normal pointer-events-none"
-            style={{
-              top: 'auto',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              bottom: 'calc(100% + 10px)',
-            }}
-          >
-            <div className="font-semibold mb-1">{installation.customerName} {installation.customerSurname}</div>
-            <div className="text-gray-300 text-[11px] space-y-1">
-              <div><span className="font-semibold">Tipo:</span> {installation.installationType || "N/A"}</div>
-              <div><span className="font-semibold">Indirizzo:</span> {installation.installationAddress}</div>
-              <div><span className="font-semibold">Tel:</span> {installation.customerPhone || "N/A"}</div>
-              <div><span className="font-semibold">Email:</span> {installation.customerEmail || "N/A"}</div>
-              <div><span className="font-semibold">Durata:</span> {installation.durationMinutes || 0} min</div>
-              {installation.technicalNotes && <div><span className="font-semibold">Note tecniche:</span> {installation.technicalNotes}</div>}
-              {installation.installerNotes && <div><span className="font-semibold">Note installatori:</span> {installation.installerNotes}</div>}
-            </div>
-          </div>
         </div>
       </ContextMenuTrigger>
       <ContextMenuContent>
@@ -311,6 +290,7 @@ function TeamRow({
 export default function TimelineDashboard({ partner, onLogout }: DashboardProps) {
   const [currentDate, setCurrentDate] = useState(startOfDay(new Date()));
   const [daysToShow, setDaysToShow] = useState(1);
+  const [selectedInstallation, setSelectedInstallation] = useState<Installation | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const utils = trpc.useUtils();
@@ -542,9 +522,7 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                             installations={scheduledInstallations}
                             hours={hours}
                             onDrop={handleDrop}
-                            onBlockClick={(inst) => {
-                              // Placeholder for future detail view
-                            }}
+                            onBlockClick={(inst) => setSelectedInstallation(inst)}
                             onStatusChange={handleStatusChange}
                           />
                         ))}
@@ -557,6 +535,74 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
           </div>
         </div>
       </div>
+      {/* Popup Dettagli Installazione */}
+      {selectedInstallation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]" onClick={() => setSelectedInstallation(null)}>
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedInstallation.customerName} {selectedInstallation.customerSurname}</h2>
+              <button onClick={() => setSelectedInstallation(null)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Tipo Installazione:</span>
+                <p className="text-gray-900 dark:text-white">{selectedInstallation.installationType || "N/A"}</p>
+              </div>
+              <div>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Stato:</span>
+                <p className="text-gray-900 dark:text-white capitalize">{selectedInstallation.status}</p>
+              </div>
+              <div className="col-span-2">
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Indirizzo Installazione:</span>
+                <p className="text-gray-900 dark:text-white">{selectedInstallation.installationAddress}</p>
+              </div>
+              <div className="col-span-2">
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Indirizzo Cliente:</span>
+                <p className="text-gray-900 dark:text-white">{selectedInstallation.customerAddress || "N/A"}</p>
+              </div>
+              <div>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Telefono:</span>
+                <p className="text-gray-900 dark:text-white">{selectedInstallation.customerPhone || "N/A"}</p>
+              </div>
+              <div>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Email:</span>
+                <p className="text-gray-900 dark:text-white">{selectedInstallation.customerEmail || "N/A"}</p>
+              </div>
+              <div>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Codice Fiscale:</span>
+                <p className="text-gray-900 dark:text-white">{selectedInstallation.customerCF || "N/A"}</p>
+              </div>
+              <div>
+                <span className="font-semibold text-gray-700 dark:text-gray-300">Durata:</span>
+                <p className="text-gray-900 dark:text-white">{selectedInstallation.durationMinutes || 0} min</p>
+              </div>
+              {selectedInstallation.technicalNotes && (
+                <div className="col-span-2">
+                  <span className="font-semibold text-gray-700 dark:text-gray-300">Note Tecniche:</span>
+                  <p className="text-gray-900 dark:text-white">{selectedInstallation.technicalNotes}</p>
+                </div>
+              )}
+              {selectedInstallation.installerNotes && (
+                <div className="col-span-2">
+                  <span className="font-semibold text-gray-700 dark:text-gray-300">Note Installatori:</span>
+                  <p className="text-gray-900 dark:text-white">{selectedInstallation.installerNotes}</p>
+                </div>
+              )}
+            </div>
+            
+            <div className="mt-6 flex gap-2">
+              <button onClick={() => setSelectedInstallation(null)} className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600">
+                Chiudi
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DndProvider>
   );
 }
