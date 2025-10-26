@@ -288,3 +288,11 @@
 - [x] Tooltip mostra tutti i campi: nome, cognome, tipo, indirizzo, note tecniche, note installatori, telefono, email, durata, stato
 
 
+
+
+## Bug da Risolvere (Fase 33)
+- [x] Tipo di installazione non visibile nel gantt
+- [x] Tooltip non appare al passaggio del mouse
+- [x] Verificare che i dati vengano passati dal backend al frontend
+
+

@@ -84,7 +84,7 @@ function InstallationBlock({
       <ContextMenuTrigger asChild>
         <div
           ref={drag as any}
-          className={`absolute h-[32px] ${colorInfo} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden group ${
+          className={`relative h-[32px] ${colorInfo} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-visible group ${
             isDragging ? "opacity-50" : ""
           }`}
           style={{ width: `${width}px`, top: "4px" }}
@@ -94,7 +94,14 @@ function InstallationBlock({
           <div className="text-[10px] opacity-90 truncate">{installation.installationType || installation.installationAddress.substring(0, 25)}</div>
           
           {/* Tooltip */}
-          <div className="absolute bottom-full left-0 mb-2 w-80 bg-gray-900 text-white text-xs rounded p-3 hidden group-hover:block z-50 whitespace-normal shadow-lg border border-gray-700">
+          <div className="fixed hidden group-hover:block z-[9999] bg-gray-900 text-white text-xs rounded p-3 shadow-lg border border-gray-700 w-80 whitespace-normal pointer-events-none"
+            style={{
+              top: 'auto',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              bottom: 'calc(100% + 10px)',
+            }}
+          >
             <div className="font-semibold mb-1">{installation.customerName} {installation.customerSurname}</div>
             <div className="text-gray-300 text-[11px] space-y-1">
               <div><span className="font-semibold">Tipo:</span> {installation.installationType || "N/A"}</div>
