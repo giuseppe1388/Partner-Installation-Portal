@@ -189,18 +189,18 @@ export default function Installations({ partner }: InstallationsProps) {
         </div>
       </div>
 
-      <div className="border rounded-lg overflow-x-auto">
-        <Table className="min-w-full">
+      <div className="border rounded-lg">
+        <Table className="w-full table-fixed">
           <TableHeader>
             <TableRow className="bg-muted">
-              <TableHead className="w-[150px]">Cliente</TableHead>
-              <TableHead className="w-[120px]">Telefono</TableHead>
-              <TableHead className="w-[200px]">Indirizzo</TableHead>
-              <TableHead className="w-[80px]">Durata</TableHead>
-              <TableHead className="w-[140px]">Inizio</TableHead>
-              <TableHead className="w-[140px]">Fine</TableHead>
-              <TableHead className="w-[100px]">Stato</TableHead>
-              <TableHead className="w-[280px]">Azioni</TableHead>
+              <TableHead className="w-[12%]">Cliente</TableHead>
+              <TableHead className="w-[10%]">Telefono</TableHead>
+              <TableHead className="w-[15%]">Indirizzo</TableHead>
+              <TableHead className="w-[7%]">Durata</TableHead>
+              <TableHead className="w-[12%]">Inizio</TableHead>
+              <TableHead className="w-[12%]">Fine</TableHead>
+              <TableHead className="w-[10%]">Stato</TableHead>
+              <TableHead className="w-[22%]">Azioni</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -213,24 +213,24 @@ export default function Installations({ partner }: InstallationsProps) {
             ) : (
               filteredInstallations.map((inst: Installation) => (
                 <TableRow key={inst.id}>
-                  <TableCell className="font-medium">{inst.customerName}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-medium truncate">{inst.customerName}</TableCell>
+                  <TableCell className="truncate text-xs">
                     {inst.customerPhone ? (
                       <a href={`tel:${inst.customerPhone}`} className="text-primary underline flex items-center gap-1">
                         <Phone className="w-3 h-3" />
-                        {inst.customerPhone}
+                        <span className="truncate">{inst.customerPhone}</span>
                       </a>
                     ) : (
                       "-"
                     )}
                   </TableCell>
-                  <TableCell className="max-w-xs truncate">{inst.installationAddress}</TableCell>
-                  <TableCell>{inst.durationMinutes ? `${inst.durationMinutes} min` : "-"}</TableCell>
-                  <TableCell className="text-sm">
-                    {inst.scheduledStart ? new Date(inst.scheduledStart).toLocaleString('it-IT') : "-"}
+                  <TableCell className="truncate text-xs" title={inst.installationAddress}>{inst.installationAddress}</TableCell>
+                  <TableCell className="text-xs">{inst.durationMinutes ? `${inst.durationMinutes} min` : "-"}</TableCell>
+                  <TableCell className="text-xs truncate">
+                    {inst.scheduledStart ? new Date(inst.scheduledStart).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : "-"}
                   </TableCell>
-                  <TableCell className="text-sm">
-                    {inst.scheduledEnd ? new Date(inst.scheduledEnd).toLocaleString('it-IT') : "-"}
+                  <TableCell className="text-xs truncate">
+                    {inst.scheduledEnd ? new Date(inst.scheduledEnd).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : "-"}
                   </TableCell>
                   <TableCell>
                     <Badge className={`${STATUS_COLORS[inst.status]?.bg || "bg-gray-100"} ${STATUS_COLORS[inst.status]?.text || "text-black"}`}>
@@ -238,11 +238,12 @@ export default function Installations({ partner }: InstallationsProps) {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-2">
+                    <div className="flex gap-1 flex-wrap">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleView(inst)}
+                        className="text-xs px-2 py-1 h-7"
                       >
                         Visualizza
                       </Button>
@@ -250,6 +251,7 @@ export default function Installations({ partner }: InstallationsProps) {
                         size="sm"
                         variant="outline"
                         onClick={() => handleEdit(inst)}
+                        className="text-xs px-2 py-1 h-7"
                       >
                         Modifica
                       </Button>
@@ -258,6 +260,7 @@ export default function Installations({ partner }: InstallationsProps) {
                           size="sm"
                           variant="destructive"
                           onClick={() => handleReject(inst)}
+                          className="text-xs px-2 py-1 h-7"
                         >
                           Rifiuta
                         </Button>

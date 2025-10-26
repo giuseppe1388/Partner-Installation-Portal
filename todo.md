@@ -378,3 +378,12 @@
 - [x] Ridurre la larghezza delle colonne per evitare scroll orizzontale
 
 
+
+
+## Fase 43: Adattare Completamente la Tabella alla Pagina
+- [x] Usare larghezze percentuali invece di pixel fissi
+- [x] Rimuovere scroll orizzontale
+- [x] Rendere le colonne più compatte
+- [x] Tabella deve occupare tutta la larghezza disponibile
+
+
