@@ -319,7 +319,29 @@ export default function Installations({ partner }: InstallationsProps) {
               )}
             </div>
           )}
-          <DialogFooter>
+          <DialogFooter className="flex justify-between">
+            <div className="flex gap-2">
+              {selectedInstallation?.customerPhone && (
+                <Button 
+                  variant="outline"
+                  onClick={() => window.open(`tel:${selectedInstallation.customerPhone}`, '_self')}
+                  className="flex items-center gap-2"
+                >
+                  <Phone className="w-4 h-4" />
+                  Chiama
+                </Button>
+              )}
+              {selectedInstallation?.installationAddress && (
+                <Button 
+                  variant="outline"
+                  onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedInstallation.installationAddress)}`, '_blank')}
+                  className="flex items-center gap-2"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Google Maps
+                </Button>
+              )}
+            </div>
             <Button onClick={() => setShowViewDialog(false)}>Chiudi</Button>
           </DialogFooter>
         </DialogContent>

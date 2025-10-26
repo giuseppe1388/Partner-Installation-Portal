@@ -395,3 +395,10 @@
 - [x] Modifica: implementare form completo invece di "Funzionalità in sviluppo..."
 
 
+
+
+## Fase 45: Pulsanti Google Maps e Chiama nel Dialog Visualizza
+- [x] Aggiungere pulsante "Apri in Google Maps" nel dialog Visualizza
+- [x] Aggiungere pulsante "Chiama" nel dialog Visualizza
+
+
