@@ -140,3 +140,8 @@
 - [x] Generare link Waze automaticamente da installationAddress
 - [x] Mostrare pulsanti nel dialog tecnico senza necessità di link manuali
 
+
+
+## Bug Report
+- [x] Login tecnico non persiste dopo refresh pagina (RISOLTO: aggiunta persistenza localStorage)
+
