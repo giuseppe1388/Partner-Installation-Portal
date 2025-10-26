@@ -60,3 +60,10 @@
 - [x] Mostrare slot installazioni per squadra (stile Field Service)
 - [x] Permettere drag-and-drop installazioni negli slot delle squadre
 - [x] Aggiungere controlli navigazione (1/2/3 giorni, avanti/indietro)
+
+## Fase 10: Redesign Schedulatore Stile Salesforce Field Service
+- [x] Rifare layout con sidebar sinistra (lista installazioni), colonna centrale (risorse), timeline destra
+- [x] Implementare blocchi colorati di dimensione variabile (basata su durata)
+- [x] Mostrare nome cliente/servizio nei blocchi
+- [x] Implementare scroll verticale per molte squadre
+- [x] Migliorare visualizzazione compatta (molte righe visibili)

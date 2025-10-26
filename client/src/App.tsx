@@ -18,6 +18,9 @@ function Router() {
         <Redirect to="/partner" />
       </Route>
       <Route path={"/partner"} component={PartnerPortal} />
+      <Route path={"/admin"}>
+        <Redirect to="/admin/partners" />
+      </Route>
       <Route path={"/admin/partners"} component={PartnersPage} />
       <Route path={"/admin/teams"} component={TeamsPage} />
       <Route path={"/admin/installations"} component={InstallationsPage} />
