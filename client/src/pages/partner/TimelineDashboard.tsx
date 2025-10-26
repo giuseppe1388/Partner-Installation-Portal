@@ -542,13 +542,8 @@ function PendingInstallationItem({ installation }: { installation: Installation 
     }),
   }));
 
-  // Assegna un colore basato sul nome per renderlo più visibile
-  const colors = [
-    "bg-blue-100 dark:bg-blue-900 hover:bg-blue-200 dark:hover:bg-blue-800 border-2 border-blue-300 dark:border-blue-700",
-    "bg-purple-100 dark:bg-purple-900 hover:bg-purple-200 dark:hover:bg-purple-800 border-2 border-purple-300 dark:border-purple-700",
-    "bg-pink-100 dark:bg-pink-900 hover:bg-pink-200 dark:hover:bg-pink-800 border-2 border-pink-300 dark:border-pink-700",
-  ];
-  const colorIndex = installation.id % colors.length;
+  // Usa il colore tema per lo sfondo
+  const themeColor = "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 border border-gray-300 dark:border-gray-600";
 
   // Mappa stato a colore badge
   const statusBadgeColor: Record<string, string> = {
@@ -563,7 +558,7 @@ function PendingInstallationItem({ installation }: { installation: Installation 
   return (
     <div
       ref={drag as any}
-      className={`p-3 ${colors[colorIndex]} rounded cursor-move text-sm font-medium relative ${
+      className={`p-3 ${themeColor} rounded cursor-move text-sm font-medium relative ${
         isDragging ? "opacity-50" : ""
       }`}
     >

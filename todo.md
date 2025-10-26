@@ -251,3 +251,11 @@
 - [x] Il badge deve essere ben visibile e piccolo
 
 
+
+
+## Fase 30: Modifica Colori Slot "Da Schedulare"
+- [x] Cambiare colore di sfondo degli slot da blu/rosa/viola a colore tema (grigio chiaro)
+- [x] Mantenere solo il badge colorato per lo stato
+- [x] Applicare colore tema per coerenza visiva
+
+
