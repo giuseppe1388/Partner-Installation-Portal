@@ -304,3 +304,9 @@
 - [x] Popup mostra tutti i dettagli: nome, cognome, tipo, indirizzo, note tecniche, note installatori, telefono, email, durata, stato
 
 
+
+
+## Fase 35: Modifica Sfondo Popup
+- [x] Cambiare sfondo popup da nero a trasparente
+
+

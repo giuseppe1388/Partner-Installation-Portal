@@ -537,7 +537,7 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
       </div>
       {/* Popup Dettagli Installazione */}
       {selectedInstallation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10000]" onClick={() => setSelectedInstallation(null)}>
+        <div className="fixed inset-0 bg-transparent flex items-center justify-center z-[10000]" onClick={() => setSelectedInstallation(null)}>
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-4">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{selectedInstallation.customerName} {selectedInstallation.customerSurname}</h2>
