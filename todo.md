@@ -209,3 +209,16 @@
 
 - [x] Il drag-and-drop degli slot "Da Schedulare" non funziona - gli slot non vengono spostati nel calendario
 
+
+
+## Fase 27: Menu Collapsibile e Responsive Design
+- [x] Aggiungere toggle per aprire/chiudere il menu a sinistra
+- [x] Adattare il planner a smartphone (responsive design)
+- [x] Testare su dispositivi mobili
+- [x] Aggiungere hamburger menu per mobile
+
+## Fase 28: Guida Integrazione Salesforce
+- [ ] Creare documentazione su come collegare a Salesforce
+- [ ] Definire il formato dei dati per l'integrazione
+- [ ] Testare l'integrazione con Salesforce
+
