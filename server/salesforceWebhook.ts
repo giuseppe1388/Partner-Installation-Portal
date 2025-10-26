@@ -1,6 +1,7 @@
 import * as db from "./db";
 
 interface ScheduleWebhookPayload {
+  eventType: string;
   ServiceAppointmentId: string;
   StartDateTime: string;
   EndDateTime: string;
@@ -45,6 +46,7 @@ export async function sendScheduleToSalesforce(installationId: number): Promise<
 
     // Prepare payload (only dates, Partner and Team are managed in Salesforce)
     const payload: ScheduleWebhookPayload = {
+      eventType: 'schedule',
       ServiceAppointmentId: installation.serviceAppointmentId,
       StartDateTime: new Date(installation.scheduledStart).toISOString(),
       EndDateTime: new Date(installation.scheduledEnd).toISOString(),
@@ -100,6 +102,7 @@ export async function sendCancellationToSalesforce(installationId: number): Prom
     const webhookUrl = webhookConfig.configValue;
 
     const payload = {
+      eventType: 'cancellation',
       ServiceAppointmentId: installation.serviceAppointmentId,
       Status: 'Cancelled',
     };
@@ -125,6 +128,63 @@ export async function sendCancellationToSalesforce(installationId: number): Prom
     return true;
   } catch (error) {
     console.error('[SalesforceWebhook] Error sending cancellation webhook to Salesforce:', error);
+    return false;
+  }
+}
+
+
+
+
+/**
+ * Send rejection data to Salesforce webhook
+ * @param installationId Installation ID
+ * @param rejectionReason Reason for rejection
+ * @returns Success status
+ */
+export async function sendRejectionToSalesforce(installationId: number, rejectionReason: string): Promise<boolean> {
+  try {
+    const installation = await db.getInstallationById(installationId);
+    if (!installation) {
+      console.error('[SalesforceWebhook] Installation not found:', installationId);
+      return false;
+    }
+
+    const webhookConfig = await db.getApiConfig('salesforce_webhook_url');
+    if (!webhookConfig || !webhookConfig.configValue) {
+      console.warn('[SalesforceWebhook] Salesforce webhook URL not configured');
+      return false;
+    }
+
+    const webhookUrl = webhookConfig.configValue;
+
+    const payload = {
+      eventType: 'rejection',
+      ServiceAppointmentId: installation.serviceAppointmentId,
+      Status: 'Rejected',
+      RejectionReason: rejectionReason,
+    };
+
+    console.log('[SalesforceWebhook] Sending rejection payload to Salesforce:', payload);
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      console.error('[SalesforceWebhook] Failed to send rejection webhook:', response.statusText);
+      return false;
+    }
+
+    const responseData = await response.json();
+    console.log('[SalesforceWebhook] Rejection webhook sent successfully:', responseData);
+
+    return true;
+  } catch (error) {
+    console.error('[SalesforceWebhook] Error sending rejection webhook to Salesforce:', error);
     return false;
   }
 }

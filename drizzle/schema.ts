@@ -113,7 +113,9 @@ export const installations = mysqlTable("installations", {
   /** Calculated travel time in minutes (from Google Maps) */
   travelTimeMinutes: int("travelTimeMinutes"),
   /** Installation status */
-  status: mysqlEnum("status", ["pending", "scheduled", "in_progress", "completed", "cancelled"]).default("pending").notNull(),
+  status: mysqlEnum("status", ["pending", "scheduled", "in_progress", "completed", "cancelled", "rejected"]).default("pending").notNull(),
+  /** Rejection reason (when partner rejects the installation) */
+  rejectionReason: text("rejectionReason"),
   /** Assigned team ID (null if not scheduled) */
   teamId: int("teamId"),
   /** Assigned partner ID (null if not scheduled) */

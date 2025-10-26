@@ -291,6 +291,8 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
   const [currentDate, setCurrentDate] = useState(startOfDay(new Date()));
   const [daysToShow, setDaysToShow] = useState(1);
   const [selectedInstallation, setSelectedInstallation] = useState<Installation | null>(null);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const utils = trpc.useUtils();
@@ -323,7 +325,32 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
     },
   });
 
-  // Installazioni da schedulare (pending + cancelled)
+  const rejectMutation = trpc.partner.rejectInstallation.useMutation({
+    onSuccess: () => {
+      utils.partner.myInstallations.invalidate();
+      toast.success("Incarico rifiutato con successo");
+      setShowRejectDialog(false);
+      setSelectedInstallation(null);
+      setRejectionReason('');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Errore nel rifiuto dell'incarico");
+    },
+  });
+
+  const handleReject = () => {
+    if (!selectedInstallation) return;
+    if (rejectionReason.trim().length < 10) {
+      toast.error('La motivazione deve essere di almeno 10 caratteri');
+      return;
+    }
+    rejectMutation.mutate({
+      installationId: selectedInstallation.id,
+      rejectionReason: rejectionReason.trim(),
+    });
+  };
+
+  // Installazioni da schedulare (pending + cancelled) - escludi rejected
   const unscheduledInstallations = useMemo(() => {
     if (!installations) return [];
     return installations.filter((inst) => inst.status === "pending" || inst.status === "cancelled");
@@ -609,6 +636,14 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
             </div>
             
             <div className="mt-6 flex gap-2">
+              {selectedInstallation.status === 'pending' && (
+                <button 
+                  onClick={() => setShowRejectDialog(true)} 
+                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Rifiuta Incarico
+                </button>
+              )}
               <button onClick={() => setSelectedInstallation(null)} className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600">
                 Chiudi
               </button>
@@ -617,6 +652,51 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
         </div>
         );
       })()}
+
+      {/* Dialog Rifiuta Incarico */}
+      {showRejectDialog && selectedInstallation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[10001]" onClick={() => setShowRejectDialog(false)}>
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-md w-full mx-4 p-6" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Rifiuta Incarico</h2>
+            <p className="text-gray-700 dark:text-gray-300 mb-4">
+              Sei sicuro di voler rifiutare l'incarico per <strong>{selectedInstallation.customerName}</strong>?
+            </p>
+            <div className="mb-4">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                Motivazione (obbligatoria, minimo 10 caratteri):
+              </label>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                rows={4}
+                placeholder="Inserisci la motivazione del rifiuto..."
+              />
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                {rejectionReason.length}/10 caratteri minimi
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  setShowRejectDialog(false);
+                  setRejectionReason('');
+                }}
+                className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600"
+              >
+                Annulla
+              </button>
+              <button
+                onClick={handleReject}
+                disabled={rejectMutation.isPending || rejectionReason.trim().length < 10}
+                className="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {rejectMutation.isPending ? 'Rifiuto...' : 'Conferma Rifiuto'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DndProvider>
   );
 }

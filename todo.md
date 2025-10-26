@@ -343,3 +343,16 @@
 - [x] Aggiornamento live dell'ora quando il partner cambia la schedulazione (già implementato con invalidate della query)
 
 
+
+
+## Fase 40: Pulsante Rifiuta Incarico e Webhook con EventType
+- [x] Aggiungere campo rejectionReason al database
+- [x] Aggiungere stato "rejected" agli stati disponibili
+- [x] Aggiungere campo eventType a tutti i webhook Salesforce
+- [x] Creare webhook sendRejectionToSalesforce con eventType "rejection"
+- [x] Aggiungere pulsante "Rifiuta Incarico" nel popup dei dettagli installazione
+- [x] Dialog di conferma con campo note obbligatorio
+- [x] Quando rifiutato: invia webhook a Salesforce con note
+- [x] Quando rifiutato: nascondere al partner (ma rimane nel sistema per altri partner)
+
+

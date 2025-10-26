@@ -1,0 +1,2 @@
+ALTER TABLE `installations` MODIFY COLUMN `status` enum('pending','scheduled','in_progress','completed','cancelled','rejected') NOT NULL DEFAULT 'pending';--> statement-breakpoint
+ALTER TABLE `installations` ADD `rejectionReason` text;
