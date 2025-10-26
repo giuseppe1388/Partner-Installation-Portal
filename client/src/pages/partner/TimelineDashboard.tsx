@@ -156,14 +156,53 @@ function TeamRow({
   date: Date;
   installations: Installation[];
   hours: number[];
-  onDrop: (installation: Installation, team: Team, date: Date, hour: number) => void;
+  onDrop: (installation: Installation, team: Team, date: Date, hour: number, minute: number) => void;
   onBlockClick: (installation: Installation) => void;
   onStatusChange?: (installationId: number, status: string) => void;
 }) {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: ITEM_TYPE,
-    drop: (item: { installation: Installation }) => {
-      onDrop(item.installation, team, date, hours[0]);
+    drop: (item: { installation: Installation }, monitor) => {
+      // Ottenere le coordinate del drop
+      const clientOffset = monitor.getClientOffset();
+      if (!clientOffset) {
+        onDrop(item.installation, team, date, hours[0], 0);
+        return;
+      }
+
+      // Ottenere la posizione dell'elemento drop (il contenitore della riga)
+      const dropElement = (drop as any).getHandlerId?.();
+      const dropNode = document.querySelector('[data-team-row]');
+      
+      if (!dropNode) {
+        onDrop(item.installation, team, date, hours[0], 0);
+        return;
+      }
+
+      const rect = dropNode.getBoundingClientRect();
+      const relativeX = clientOffset.x - rect.left;
+      
+      // Calcolare l'ora e i minuti basati sulla posizione X
+      // HOUR_WIDTH = 80px per ora
+      const hourOffset = relativeX / HOUR_WIDTH;
+      let hour = Math.floor(hourOffset) + hours[0];
+      let minute = Math.round((hourOffset - Math.floor(hourOffset)) * 60);
+      
+      // Snap a 15 minuti
+      const remainder = minute % 15;
+      if (remainder < 7.5) {
+        minute = minute - remainder;
+      } else {
+        minute = minute - remainder + 15;
+      }
+      
+      // Gestire il caso in cui minute >= 60
+      if (minute >= 60) {
+        minute = 0;
+        hour += 1;
+      }
+      
+      onDrop(item.installation, team, date, hour, minute);
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
@@ -179,6 +218,7 @@ function TeamRow({
   return (
     <div
       ref={drop as any}
+      data-team-row
       className={`relative border-b border-r ${isOver ? "bg-blue-50 dark:bg-blue-950" : ""}`}
       style={{ height: `${ROW_HEIGHT}px`, minWidth: `${hours.length * HOUR_WIDTH}px` }}
     >
@@ -320,9 +360,9 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
     return Array.from({ length: 12 }, (_, i) => i + 8);
   }, []);
 
-  const handleDrop = (installation: Installation, team: Team, date: Date, hour: number) => {
+  const handleDrop = (installation: Installation, team: Team, date: Date, hour: number, minute: number = 0) => {
     const startTime = new Date(date);
-    startTime.setHours(hour, 0, 0, 0);
+    startTime.setHours(hour, minute, 0, 0);
 
     const durationMinutes = installation.durationMinutes || 120;
     const endTime = new Date(startTime.getTime() + durationMinutes * 60000);

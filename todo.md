@@ -158,3 +158,8 @@
 - [x] Implementare ricerca unificata (nome, cognome, telefono, indirizzo)
 - [x] Aggiungere pulsante per inviare webhook a Salesforce quando cambio stato
 
+## Fase 21: Snapping a 15 Minuti nel Planner
+- [x] Implementare logica di snapping a intervalli di 15 minuti quando trascini gli slot
+- [x] Arrotondare automaticamente l'ora di inizio agli slot di 15 minuti più vicini
+- [x] Testare il drag-and-drop con snapping
+
