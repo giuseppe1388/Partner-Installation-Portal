@@ -240,4 +240,5 @@
 - [x] Bloccare la colonna "Squadre" e sincronizzare lo scroll con una sola barra
 - [x] Rimuovere le barre di scroll individuali dalle righe - lasciare solo una barra globale
 - [x] Sincronizzare correttamente lo scroll - le righe non si muovono quando scrolli l'header
+- [x] Rimuovere la barra di scroll dalle righe - lasciare solo una nel header
 
