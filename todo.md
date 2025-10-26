@@ -175,6 +175,11 @@
 - [x] Usare useRef per ottenere un riferimento affidabile alla riga
 - [x] Arrotondare automaticamente l'ora di inizio agli slot di 15 minuti più vicini
 
+## Fase 24: Indicatore Visivo durante il Drag-and-Drop
+- [x] Aggiungere un tooltip che mostra l'ora di inizio e fine mentre trascini
+- [x] Mostrare un'anteprima del blocco nel calendario durante il drag
+- [x] Evidenziare la posizione di rilascio con snapping a 15 minuti
+
 ## Bug da Risolvere
 
 - [x] Verificare che il calcolo dell'ora di fine sia corretto quando si trascina uno slot con snapping a 15 minuti

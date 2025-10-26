@@ -8,17 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Input } from "@/components/ui/input";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -31,36 +20,20 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { LogOut, Loader2, Clock, MapPin, FileText, Phone, Mail, User, ChevronLeft, ChevronRight, Calendar, List } from "lucide-react";
 import { toast } from "sonner";
-import { APP_TITLE, APP_LOGO } from "@/const";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 
-const ITEM_TYPE = "INSTALLATION";
+const ITEM_TYPE = "installation";
 const HOUR_WIDTH = 80;
-const ROW_HEIGHT = 40;
-
-interface DashboardProps {
-  partner: any;
-  onLogout: () => void;
-}
+const ROW_HEIGHT = 48;
 
 interface Installation {
   id: number;
-  serviceAppointmentId: string;
   customerName: string;
-  customerCF?: string | null;
-  customerPhone?: string | null;
-  customerEmail?: string | null;
-  customerAddress?: string | null;
   installationAddress: string;
-  technicalNotes?: string | null;
-  imagesToView?: string | null;
-  completionLink?: string | null;
   durationMinutes?: number | null;
-  travelTimeMinutes?: number | null;
   status: string;
   teamId?: number | null;
-  partnerId?: number | null;
   scheduledStart?: Date | string | null;
   scheduledEnd?: Date | string | null;
 }
@@ -68,15 +41,19 @@ interface Installation {
 interface Team {
   id: number;
   name: string;
-  salesforceTeamId: string;
 }
 
-const STATUS_COLORS: Record<string, { bg: string; label: string; color: string }> = {
-  pending: { bg: "bg-gray-500", label: "In Attesa", color: "#6B7280" },
-  scheduled: { bg: "bg-blue-500", label: "Schedulata", color: "#3B82F6" },
-  in_progress: { bg: "bg-yellow-500", label: "In Corso", color: "#EAB308" },
-  completed: { bg: "bg-green-500", label: "Completata", color: "#22C55E" },
-  cancelled: { bg: "bg-red-500", label: "Annullata", color: "#EF4444" },
+interface DashboardProps {
+  partner: any;
+  onLogout: () => void;
+}
+
+const STATUS_COLORS: Record<string, string> = {
+  pending: "bg-gray-400",
+  scheduled: "bg-blue-500",
+  in_progress: "bg-yellow-500",
+  completed: "bg-green-500",
+  cancelled: "bg-red-500",
 };
 
 // Installation Block Component
@@ -106,7 +83,7 @@ function InstallationBlock({
       <ContextMenuTrigger asChild>
         <div
           ref={drag as any}
-          className={`absolute h-[32px] ${colorInfo.bg} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
+          className={`absolute h-[32px] ${colorInfo} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
             isDragging ? "opacity-50" : ""
           }`}
           style={{ width: `${width}px`, top: "4px" }}
@@ -161,11 +138,12 @@ function TeamRow({
   onStatusChange?: (installationId: number, status: string) => void;
 }) {
   const rowRef = useRef<HTMLDivElement>(null);
+  const [dragPosition, setDragPosition] = useState<{ hour: number; minute: number; x: number; duration: number } | null>(null);
+  const [draggedItem, setDraggedItem] = useState<Installation | null>(null);
   
   const [{ isOver }, drop] = useDrop(() => ({
     accept: ITEM_TYPE,
     drop: (item: { installation: Installation }, monitor) => {
-      // Ottenere le coordinate del drop
       const clientOffset = monitor.getClientOffset();
       if (!clientOffset || !rowRef.current) {
         onDrop(item.installation, team, date, hours[0], 0);
@@ -175,13 +153,10 @@ function TeamRow({
       const rect = rowRef.current.getBoundingClientRect();
       const relativeX = clientOffset.x - rect.left;
       
-      // Calcolare l'ora e i minuti basati sulla posizione X
-      // HOUR_WIDTH = 80px per ora
       const hourOffset = relativeX / HOUR_WIDTH;
       let hour = Math.floor(hourOffset) + hours[0];
       let minute = Math.round((hourOffset - Math.floor(hourOffset)) * 60);
       
-      // Snap a 15 minuti
       const remainder = minute % 15;
       if (remainder < 7.5) {
         minute = minute - remainder;
@@ -189,13 +164,41 @@ function TeamRow({
         minute = minute - remainder + 15;
       }
       
-      // Gestire il caso in cui minute >= 60
       if (minute >= 60) {
         minute = 0;
         hour += 1;
       }
       
       onDrop(item.installation, team, date, hour, minute);
+      setDragPosition(null);
+      setDraggedItem(null);
+    },
+    hover: (item: { installation: Installation }, monitor) => {
+      const clientOffset = monitor.getClientOffset();
+      if (clientOffset && rowRef.current) {
+        const rect = rowRef.current.getBoundingClientRect();
+        const relativeX = clientOffset.x - rect.left;
+        
+        const hourOffset = relativeX / HOUR_WIDTH;
+        let hour = Math.floor(hourOffset) + hours[0];
+        let minute = Math.round((hourOffset - Math.floor(hourOffset)) * 60);
+        
+        const remainder = minute % 15;
+        if (remainder < 7.5) {
+          minute = minute - remainder;
+        } else {
+          minute = minute - remainder + 15;
+        }
+        
+        if (minute >= 60) {
+          minute = 0;
+          hour += 1;
+        }
+        
+        const duration = item.installation.durationMinutes || 120;
+        setDragPosition({ hour, minute, x: relativeX, duration });
+        setDraggedItem(item.installation);
+      }
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(),
@@ -210,12 +213,53 @@ function TeamRow({
     return format(instDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd');
   });
 
+  // Calcolare l'ora di fine dal dragPosition
+  const endTime = dragPosition ? new Date(date.getTime() + dragPosition.hour * 3600000 + dragPosition.minute * 60000 + dragPosition.duration * 60000) : null;
+
   return (
     <div
       ref={rowRef}
       className={`relative border-b border-r ${isOver ? "bg-blue-50 dark:bg-blue-950" : ""}`}
       style={{ height: `${ROW_HEIGHT}px`, minWidth: `${hours.length * HOUR_WIDTH}px` }}
+      onMouseLeave={() => {
+        setDragPosition(null);
+        setDraggedItem(null);
+      }}
     >
+      {/* Indicatore visivo durante il drag */}
+      {dragPosition && isOver && draggedItem && (
+        <>
+          {/* Anteprima del blocco */}
+          <div
+            className={`absolute h-[32px] ${STATUS_COLORS[draggedItem.status]} text-white rounded px-2 py-1 opacity-50`}
+            style={{
+              left: `${dragPosition.x}px`,
+              width: `${(dragPosition.duration / 60) * HOUR_WIDTH}px`,
+              top: "4px",
+            }}
+          />
+          {/* Linea verticale che mostra dove stai trascinando */}
+          <div
+            className="absolute top-0 bottom-0 w-0.5 bg-red-500 pointer-events-none"
+            style={{ left: `${dragPosition.x}px`, zIndex: 10 }}
+          />
+          {/* Tooltip con ora di inizio e fine */}
+          <div
+            className="absolute bg-gray-900 text-white px-3 py-2 rounded text-xs whitespace-nowrap pointer-events-none border border-gray-700"
+            style={{
+              left: `${dragPosition.x}px`,
+              top: '-45px',
+              transform: 'translateX(-50%)',
+              zIndex: 20,
+            }}
+          >
+            <div className="font-semibold">
+              {String(dragPosition.hour).padStart(2, '0')}:{String(dragPosition.minute).padStart(2, '0')} - {String(endTime?.getHours()).padStart(2, '0')}:{String(endTime?.getMinutes()).padStart(2, '0')}
+            </div>
+          </div>
+        </>
+      )}
+      
       {teamInstallations.map((inst) => {
         const instStart = typeof inst.scheduledStart === 'string' ? parseISO(inst.scheduledStart) : new Date(inst.scheduledStart!);
         const startHour = instStart.getHours() + instStart.getMinutes() / 60;
@@ -234,48 +278,6 @@ function TeamRow({
           </div>
         );
       })}
-    </div>
-  );
-}
-
-// Pending Installation Component
-function PendingInstallation({ installation, onClick }: { installation: Installation; onClick: () => void }) {
-  const [{ isDragging }, drag] = useDrag(() => ({
-    type: ITEM_TYPE,
-    item: { installation },
-    collect: (monitor) => ({
-      isDragging: !!monitor.isDragging(),
-    }),
-  }));
-
-  const colorInfo = STATUS_COLORS[installation.status] || STATUS_COLORS.pending;
-
-  return (
-    <div
-      ref={drag as any}
-      className={`p-2 border rounded-lg cursor-pointer hover:bg-accent transition-colors text-xs ${
-        isDragging ? "opacity-50" : ""
-      }`}
-      onClick={onClick}
-    >
-      <div className="flex items-center justify-between mb-1">
-        <div className="font-medium truncate flex-1">{installation.customerName}</div>
-        <div
-          className="w-3 h-3 rounded-full flex-shrink-0 ml-1"
-          style={{ backgroundColor: colorInfo.color }}
-          title={colorInfo.label}
-        />
-      </div>
-      <div className="text-muted-foreground flex items-center gap-1">
-        <MapPin className="w-3 h-3 flex-shrink-0" />
-        <span className="truncate">{installation.installationAddress.substring(0, 25)}...</span>
-      </div>
-      {installation.durationMinutes && (
-        <div className="text-muted-foreground mt-1 flex items-center gap-1">
-          <Clock className="w-3 h-3 flex-shrink-0" />
-          {installation.durationMinutes} min
-        </div>
-      )}
     </div>
   );
 }
@@ -378,558 +380,246 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
   };
 
   const handleEditDates = () => {
-    if (!selectedInstallation || !editStartDate || !editStartTime || !editEndDate || !editEndTime) {
-      toast.error("Compila tutti i campi");
-      return;
-    }
+    if (!selectedInstallation) return;
 
-    const startDateTime = new Date(`${editStartDate}T${editStartTime}`);
-    const endDateTime = new Date(`${editEndDate}T${editEndTime}`);
+    const startDate = new Date(editStartDate);
+    const [startHour, startMinute] = editStartTime.split(":").map(Number);
+    startDate.setHours(startHour, startMinute, 0, 0);
 
-    if (startDateTime >= endDateTime) {
-      toast.error("L'ora di inizio deve essere prima dell'ora di fine");
-      return;
-    }
+    const endDate = new Date(editEndDate);
+    const [endHour, endMinute] = editEndTime.split(":").map(Number);
+    endDate.setHours(endHour, endMinute, 0, 0);
 
     scheduleMutation.mutate({
       installationId: selectedInstallation.id,
       partnerId: partner.id,
       teamId: selectedInstallation.teamId || 0,
-      scheduledStart: startDateTime.toISOString(),
-      scheduledEnd: endDateTime.toISOString(),
+      scheduledStart: startDate.toISOString(),
+      scheduledEnd: endDate.toISOString(),
     });
 
     setIsEditDateDialogOpen(false);
-    setIsDetailDialogOpen(false);
-  };
-
-  const openDetailDialog = (installation: Installation) => {
-    setSelectedInstallation(installation);
-    setIsDetailDialogOpen(true);
-  };
-
-  const openEditDateDialog = () => {
-    if (!selectedInstallation) return;
-
-    const startDate = selectedInstallation.scheduledStart
-      ? typeof selectedInstallation.scheduledStart === 'string'
-        ? parseISO(selectedInstallation.scheduledStart)
-        : selectedInstallation.scheduledStart
-      : new Date();
-
-    const endDate = selectedInstallation.scheduledEnd
-      ? typeof selectedInstallation.scheduledEnd === 'string'
-        ? parseISO(selectedInstallation.scheduledEnd)
-        : selectedInstallation.scheduledEnd
-      : new Date();
-
-    setEditStartDate(format(startDate, 'yyyy-MM-dd'));
-    setEditStartTime(format(startDate, 'HH:mm'));
-    setEditEndDate(format(endDate, 'yyyy-MM-dd'));
-    setEditEndTime(format(endDate, 'HH:mm'));
-    setIsDetailDialogOpen(false);
-    setIsEditDateDialogOpen(true);
-  };
-
-  const getStatusBadge = (status: string) => {
-    const colorInfo = STATUS_COLORS[status] || STATUS_COLORS.pending;
-    return <Badge style={{ backgroundColor: colorInfo.color }}>{colorInfo.label}</Badge>;
   };
 
   if (loadingInstallations || loadingTeams) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="w-8 h-8 animate-spin" />
       </div>
     );
   }
 
   return (
-    <DndProvider backend={HTML5Backend}>
-      <div className="min-h-screen bg-background flex">
-        {/* Left Sidebar Menu */}
-        <div className="w-64 border-r bg-card flex flex-col flex-shrink-0">
-          {/* Logo/Header */}
-          <div className="p-4 border-b">
-            <div className="flex items-center gap-3">
-              <img src={APP_LOGO} alt="Logo" className="w-10 h-10 rounded-lg" />
-              <div>
-                <h1 className="font-bold text-sm">{APP_TITLE}</h1>
-                <p className="text-xs text-muted-foreground">{partner.name}</p>
+    <div className="w-full h-full flex flex-col">
+      <div className="flex gap-2 p-4 border-b">
+        <Button
+          variant={activeView === "planner" ? "default" : "outline"}
+          onClick={() => setActiveView("planner")}
+        >
+          Planner
+        </Button>
+        <Button
+          variant={activeView === "installations" ? "default" : "outline"}
+          onClick={() => setActiveView("installations")}
+        >
+          Installazioni
+        </Button>
+      </div>
+
+      {activeView === "planner" ? (
+        <div className="flex-1 overflow-hidden flex">
+          {/* Left Sidebar - Unscheduled Installations */}
+          <div className="w-64 border-r overflow-y-auto p-4 space-y-2">
+            <h3 className="font-semibold text-sm">Da Schedulare</h3>
+            <p className="text-xs text-gray-500">Trascina nel calendario</p>
+            {unscheduledInstallations.map((inst) => (
+              <div
+                key={inst.id}
+                className="p-3 bg-gray-100 dark:bg-gray-800 rounded cursor-move hover:bg-gray-200 dark:hover:bg-gray-700 text-sm"
+              >
+                <div className="font-medium">{inst.customerName}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">{inst.installationAddress}</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">{inst.durationMinutes} min</div>
+              </div>
+            ))}
+
+            <div className="mt-8 pt-4 border-t">
+              <h3 className="font-semibold text-sm mb-2">Legenda</h3>
+              <div className="space-y-1 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-gray-400" />
+                  In Attesa
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-blue-500" />
+                  Schedulata
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-yellow-500" />
+                  In Corso
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-green-500" />
+                  Completata
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded bg-red-500" />
+                  Annullata
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Navigation Menu */}
-          <nav className="flex-1 p-3">
-            <Button
-              variant={activeView === "planner" ? "default" : "ghost"}
-              className="w-full justify-start mb-2"
-              onClick={() => setActiveView("planner")}
-            >
-              <Calendar className="w-4 h-4 mr-2" />
-              Planner
-            </Button>
-            <Button
-              variant={activeView === "installations" ? "default" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => setActiveView("installations")}
-            >
-              <List className="w-4 h-4 mr-2" />
-              Installazioni
-            </Button>
-          </nav>
-
-          {/* Logout */}
-          <div className="p-3 border-t">
-            <Button variant="outline" className="w-full justify-start" onClick={onLogout}>
-              <LogOut className="w-4 h-4 mr-2" />
-              Esci
-            </Button>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* Planner View */}
-          {activeView === "planner" && (
-            <div className="flex flex-1 overflow-hidden">
-              {/* Left Sidebar - Pending Installations */}
-              <div className="w-64 border-r bg-card flex-shrink-0 flex flex-col">
-                <div className="p-3 border-b bg-muted">
-                  <h2 className="font-semibold text-sm">Da Schedulare</h2>
-                  <p className="text-xs text-muted-foreground">Trascina nel calendario</p>
-                </div>
-                <ScrollArea className="flex-1">
-                  <div className="p-2 space-y-2">
-                    {unscheduledInstallations.length === 0 ? (
-                      <p className="text-xs text-muted-foreground text-center py-8">
-                        Nessuna installazione da schedulare
-                      </p>
-                    ) : (
-                      unscheduledInstallations.map((installation) => (
-                        <PendingInstallation
-                          key={installation.id}
-                          installation={installation}
-                          onClick={() => openDetailDialog(installation)}
-                        />
-                      ))
-                    )}
-                  </div>
-                </ScrollArea>
-                {/* Legend */}
-                <div className="p-3 border-t bg-muted">
-                  <h3 className="font-semibold text-xs mb-2">Legenda</h3>
-                  <div className="space-y-1">
-                    {Object.entries(STATUS_COLORS).map(([status, info]) => (
-                      <div key={status} className="flex items-center gap-2 text-xs">
-                        <div className="w-3 h-3 rounded" style={{ backgroundColor: info.color }} />
-                        <span>{info.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Center - Team Names */}
-              <div className="w-48 border-r bg-card flex-shrink-0 flex flex-col">
-                <div className="p-3 border-b bg-muted flex items-center justify-between" style={{ height: "100px" }}>
-                  <div>
-                    <h2 className="font-semibold text-sm">Squadre</h2>
-                    <div className="flex gap-1 mt-2">
-                      <Button
-                        variant={daysToShow === 1 ? "default" : "outline"}
-                        size="sm"
-                        className="text-xs h-7 px-2"
-                        onClick={() => setDaysToShow(1)}
-                      >
-                        Oggi
-                      </Button>
-                      <Button
-                        variant={daysToShow === 3 ? "default" : "outline"}
-                        size="sm"
-                        className="text-xs h-7 px-2"
-                        onClick={() => setDaysToShow(3)}
-                      >
-                        3gg
-                      </Button>
-                      <Button
-                        variant={daysToShow === 7 ? "default" : "outline"}
-                        size="sm"
-                        className="text-xs h-7 px-2"
-                        onClick={() => setDaysToShow(7)}
-                      >
-                        1sett
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-                <ScrollArea className="flex-1">
-                  <div>
-                    {teams?.map((team) => (
-                      <div
-                        key={team.id}
-                        className="border-b px-3 flex items-center font-medium text-sm"
-                        style={{ height: `${ROW_HEIGHT}px` }}
-                      >
-                        {team.name}
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </div>
-
-              {/* Right - Timeline */}
-              <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="p-2 border-b bg-muted flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setCurrentDate(addDays(currentDate, -daysToShow))}>
+          {/* Main Content - Calendar */}
+          <div className="flex-1 overflow-auto">
+            <DndProvider backend={HTML5Backend}>
+              <div className="p-4 space-y-4">
+                {/* Date Navigation */}
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentDate(addDays(currentDate, -1))}
+                    >
                       <ChevronLeft className="w-4 h-4" />
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => setCurrentDate(startOfDay(new Date()))}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentDate(startOfDay(new Date()))}
+                    >
                       Oggi
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => setCurrentDate(addDays(currentDate, daysToShow))}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentDate(addDays(currentDate, 1))}
+                    >
                       <ChevronRight className="w-4 h-4" />
                     </Button>
-                    <div className="text-sm font-medium px-2">
-                      {format(currentDate, "dd MMM yyyy", { locale: it })}
-                      {daysToShow > 1 && ` - ${format(addDays(currentDate, daysToShow - 1), "dd MMM yyyy", { locale: it })}`}
-                    </div>
                   </div>
-                </div>
-
-                <div className="flex-1 overflow-auto bg-background">
-                  <div className="inline-block min-w-full">
-                    {/* Time Header */}
-                    <div className="sticky top-0 z-10 bg-muted border-b flex" style={{ height: "60px" }}>
-                      {dates.map((date) => (
-                        <div key={date.toISOString()} className="flex border-r">
-                          {hours.map((hour) => (
-                            <div
-                              key={hour}
-                              className="border-r text-center text-xs font-medium flex items-center justify-center"
-                              style={{ width: `${HOUR_WIDTH}px` }}
-                            >
-                              <div>
-                                <div className="text-[10px] text-muted-foreground">
-                                  {format(date, "dd MMM", { locale: it })}
-                                </div>
-                                <div>{hour}:00</div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Team Rows */}
-                    <div>
-                      {teams?.map((team) => (
-                        <div key={team.id} className="flex">
-                          {dates.map((date) => (
-                            <TeamRow
-                              key={date.toISOString()}
-                              team={team}
-                              date={date}
-                              installations={scheduledInstallations}
-                              hours={hours}
-                              onDrop={handleDrop}
-                              onBlockClick={openDetailDialog}
-                              onStatusChange={handleStatusChange}
-                            />
-                          ))}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Installations List View */}
-          {activeView === "installations" && (
-            <div className="flex-1 overflow-auto p-6">
-              <div className="container mx-auto max-w-6xl">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold">Tutte le Installazioni</h2>
-                  <Select value={filterStatus} onValueChange={setFilterStatus}>
-                    <SelectTrigger className="w-48">
-                      <SelectValue placeholder="Filtra per stato" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">Tutti gli stati</SelectItem>
-                      {Object.entries(STATUS_COLORS).map(([status, info]) => (
-                        <SelectItem key={status} value={status}>
-                          {info.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid gap-4">
-                  {filteredInstallations.map((installation) => {
-                    const team = teams?.find((t) => t.id === installation.teamId);
-                    return (
-                      <Card
-                        key={installation.id}
-                        className="cursor-pointer hover:shadow-md transition-shadow"
-                        onClick={() => openDetailDialog(installation)}
-                      >
-                        <CardHeader className="pb-3">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <CardTitle className="text-lg">{installation.customerName}</CardTitle>
-                              <div className="text-sm text-muted-foreground mt-1 flex items-center gap-1">
-                                <MapPin className="w-3 h-3" />
-                                {installation.installationAddress}
-                              </div>
-                            </div>
-                            {getStatusBadge(installation.status)}
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                            {installation.customerPhone && (
-                              <div>
-                                <div className="text-muted-foreground text-xs">Telefono</div>
-                                <div className="font-medium">{installation.customerPhone}</div>
-                              </div>
-                            )}
-                            {installation.durationMinutes && (
-                              <div>
-                                <div className="text-muted-foreground text-xs">Durata</div>
-                                <div className="font-medium">{installation.durationMinutes} min</div>
-                              </div>
-                            )}
-                            {team && (
-                              <div>
-                                <div className="text-muted-foreground text-xs">Squadra</div>
-                                <div className="font-medium">{team.name}</div>
-                              </div>
-                            )}
-                            {installation.scheduledStart && (
-                              <div>
-                                <div className="text-muted-foreground text-xs">Schedulata</div>
-                                <div className="font-medium">
-                                  {format(
-                                    typeof installation.scheduledStart === 'string'
-                                      ? parseISO(installation.scheduledStart)
-                                      : installation.scheduledStart,
-                                    "dd/MM/yyyy HH:mm",
-                                    { locale: it }
-                                  )}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Detail Dialog */}
-        <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Dettaglio Installazione</DialogTitle>
-              <DialogDescription>Visualizzazione completa dei dati</DialogDescription>
-            </DialogHeader>
-            {selectedInstallation && (
-              <div className="space-y-4 py-4">
-                <div className="flex items-center gap-2">
-                  <Label>Stato:</Label>
-                  {getStatusBadge(selectedInstallation.status)}
-                </div>
-
-                <div className="border-t pt-4">
-                  <h3 className="font-semibold mb-3 flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    Dati Cliente
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-muted-foreground">Nome</Label>
-                      <div className="font-medium">{selectedInstallation.customerName}</div>
-                    </div>
-                    {selectedInstallation.customerCF && (
-                      <div>
-                        <Label className="text-muted-foreground">Codice Fiscale</Label>
-                        <div className="font-medium font-mono text-sm">{selectedInstallation.customerCF}</div>
-                      </div>
-                    )}
-                    {selectedInstallation.customerEmail && (
-                      <div>
-                        <Label className="text-muted-foreground flex items-center gap-1">
-                          <Mail className="w-3 h-3" /> Email
-                        </Label>
-                        <div className="text-sm">{selectedInstallation.customerEmail}</div>
-                      </div>
-                    )}
-                    {selectedInstallation.customerPhone && (
-                      <div>
-                        <Label className="text-muted-foreground flex items-center gap-1">
-                          <Phone className="w-3 h-3" /> Telefono
-                        </Label>
-                        <div className="text-sm">{selectedInstallation.customerPhone}</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="border-t pt-4">
-                  <h3 className="font-semibold mb-3">Dati Installazione</h3>
-                  <div className="space-y-3">
-                    <div>
-                      <Label className="text-muted-foreground flex items-center gap-1">
-                        <MapPin className="w-3 h-3" /> Indirizzo Installazione
-                      </Label>
-                      <div className="text-sm">{selectedInstallation.installationAddress}</div>
-                    </div>
-                    {selectedInstallation.durationMinutes && (
-                      <div>
-                        <Label className="text-muted-foreground flex items-center gap-1">
-                          <Clock className="w-3 h-3" /> Durata Stimata
-                        </Label>
-                        <div className="text-sm">{selectedInstallation.durationMinutes} minuti</div>
-                      </div>
-                    )}
-                    {selectedInstallation.technicalNotes && (
-                      <div>
-                        <Label className="text-muted-foreground flex items-center gap-1">
-                          <FileText className="w-3 h-3" /> Note Tecniche
-                        </Label>
-                        <div className="text-sm bg-muted p-3 rounded">{selectedInstallation.technicalNotes}</div>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {selectedInstallation.scheduledStart && (
-                  <div className="border-t pt-4">
-                    <h3 className="font-semibold mb-3">Schedulazione</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-muted-foreground">Data/Ora Inizio</Label>
-                        <div className="text-sm">
-                          {format(
-                            typeof selectedInstallation.scheduledStart === 'string'
-                              ? parseISO(selectedInstallation.scheduledStart)
-                              : selectedInstallation.scheduledStart,
-                            "dd/MM/yyyy HH:mm",
-                            { locale: it }
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        <Label className="text-muted-foreground">Data/Ora Fine</Label>
-                        <div className="text-sm">
-                          {selectedInstallation.scheduledEnd &&
-                            format(
-                              typeof selectedInstallation.scheduledEnd === 'string'
-                                ? parseISO(selectedInstallation.scheduledEnd)
-                                : selectedInstallation.scheduledEnd,
-                              "dd/MM/yyyy HH:mm",
-                              { locale: it }
-                            )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {selectedInstallation.completionLink && (
-                  <div className="border-t pt-4">
-                    <Label className="text-muted-foreground">Link Completamento (Digital Experience)</Label>
-                    <a
-                      href={selectedInstallation.completionLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-primary underline block mt-1"
+                  <div className="flex gap-2">
+                    <Button
+                      variant={daysToShow === 1 ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setDaysToShow(1)}
                     >
-                      Apri Digital Experience Salesforce
-                    </a>
+                      Oggi
+                    </Button>
+                    <Button
+                      variant={daysToShow === 3 ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setDaysToShow(3)}
+                    >
+                      3gg
+                    </Button>
+                    <Button
+                      variant={daysToShow === 7 ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setDaysToShow(7)}
+                    >
+                      1sett
+                    </Button>
                   </div>
-                )}
-              </div>
-            )}
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDetailDialogOpen(false)}>
-                Chiudi
-              </Button>
-              {selectedInstallation?.scheduledStart && (
-                <Button onClick={openEditDateDialog}>
-                  Modifica Date
-                </Button>
-              )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+                  <div className="text-sm font-semibold">
+                    {format(currentDate, "d MMM yyyy", { locale: it })}
+                  </div>
+                </div>
 
-        {/* Edit Date Dialog */}
-        <Dialog open={isEditDateDialogOpen} onOpenChange={setIsEditDateDialogOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Modifica Data e Ora</DialogTitle>
-              <DialogDescription>Modifica la data e l'ora di inizio e fine</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div>
-                <Label htmlFor="start-date">Data Inizio</Label>
-                <Input
-                  id="start-date"
-                  type="date"
-                  value={editStartDate}
-                  onChange={(e) => setEditStartDate(e.target.value)}
-                />
+                {/* Calendar Grid */}
+                <div className="border rounded-lg overflow-hidden">
+                  {/* Header with hours */}
+                  <div className="flex border-b bg-gray-50 dark:bg-gray-900">
+                    <div className="w-32 border-r p-2 text-sm font-semibold">Squadre</div>
+                    <div className="flex">
+                      {dates.map((date) =>
+                        hours.map((hour) => (
+                          <div
+                            key={`${format(date, 'yyyy-MM-dd')}-${hour}`}
+                            className="border-r p-2 text-xs font-semibold text-center"
+                            style={{ width: `${HOUR_WIDTH}px` }}
+                          >
+                            <div>{format(date, "dd MMM")}</div>
+                            <div>{hour}:00</div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Team rows */}
+                  {teams?.map((team) => (
+                    <div key={team.id} className="flex border-b">
+                      <div className="w-32 border-r p-2 text-sm font-semibold flex items-center">
+                        {team.name}
+                      </div>
+                      <div className="flex">
+                        {dates.map((date) => (
+                          <TeamRow
+                            key={`${team.id}-${format(date, 'yyyy-MM-dd')}`}
+                            team={team}
+                            date={date}
+                            installations={scheduledInstallations}
+                            hours={hours}
+                            onDrop={handleDrop}
+                            onBlockClick={(inst) => {
+                              setSelectedInstallation(inst);
+                              setIsDetailDialogOpen(true);
+                            }}
+                            onStatusChange={handleStatusChange}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div>
-                <Label htmlFor="start-time">Ora Inizio</Label>
-                <Input
-                  id="start-time"
-                  type="time"
-                  value={editStartTime}
-                  onChange={(e) => setEditStartTime(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="end-date">Data Fine</Label>
-                <Input
-                  id="end-date"
-                  type="date"
-                  value={editEndDate}
-                  onChange={(e) => setEditEndDate(e.target.value)}
-                />
-              </div>
-              <div>
-                <Label htmlFor="end-time">Ora Fine</Label>
-                <Input
-                  id="end-time"
-                  type="time"
-                  value={editEndTime}
-                  onChange={(e) => setEditEndTime(e.target.value)}
-                />
+            </DndProvider>
+          </div>
+        </div>
+      ) : (
+        <div className="flex-1 overflow-auto p-4">
+          <div className="space-y-4">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <label className="text-sm font-medium">Filtro Stato</label>
+                <Select value={filterStatus} onValueChange={setFilterStatus}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Tutti gli stati</SelectItem>
+                    <SelectItem value="pending">In Attesa</SelectItem>
+                    <SelectItem value="scheduled">Schedulato</SelectItem>
+                    <SelectItem value="in_progress">In Corso</SelectItem>
+                    <SelectItem value="completed">Completato</SelectItem>
+                    <SelectItem value="cancelled">Annullato</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsEditDateDialogOpen(false)}>
-                Annulla
-              </Button>
-              <Button onClick={handleEditDates}>
-                Salva
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      </div>
-    </DndProvider>
+
+            <div className="space-y-2">
+              {filteredInstallations.map((inst) => (
+                <Card key={inst.id}>
+                  <CardContent className="pt-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="font-semibold">{inst.customerName}</h3>
+                        <p className="text-sm text-gray-600">{inst.installationAddress}</p>
+                        <p className="text-sm text-gray-600">{inst.durationMinutes} min</p>
+                      </div>
+                      <Badge>{inst.status}</Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
