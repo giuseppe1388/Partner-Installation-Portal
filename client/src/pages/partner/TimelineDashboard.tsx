@@ -282,6 +282,7 @@ function TeamRow({
 export default function TimelineDashboard({ partner, onLogout }: DashboardProps) {
   const [currentDate, setCurrentDate] = useState(startOfDay(new Date()));
   const [daysToShow, setDaysToShow] = useState(1);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const utils = trpc.useUtils();
 
@@ -468,33 +469,41 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
               </div>
 
               {/* Calendar Grid */}
-              <div className="border rounded-lg overflow-hidden">
+              <div className="border rounded-lg overflow-hidden flex flex-col">
                 {/* Header with hours */}
-                <div className="flex border-b bg-gray-50 dark:bg-gray-900 overflow-x-auto">
-                  <div className="w-32 border-r p-2 text-sm font-semibold flex-shrink-0">Squadre</div>
-                  <div className="flex">
-                    {dates.map((date) =>
-                      hours.map((hour) => (
-                        <div
-                          key={`${format(date, 'yyyy-MM-dd')}-${hour}`}
-                          className="border-r p-2 text-xs font-semibold text-center"
-                          style={{ width: `${HOUR_WIDTH}px` }}
-                        >
-                          <div>{format(date, "dd MMM")}</div>
-                          <div>{hour}:00</div>
-                        </div>
-                      ))
-                    )}
+                <div className="flex border-b bg-gray-50 dark:bg-gray-900">
+                  <div className="w-32 border-r p-2 text-sm font-semibold flex-shrink-0 sticky left-0 bg-gray-50 dark:bg-gray-900 z-10">Squadre</div>
+                  <div className="flex flex-1 overflow-x-auto" ref={scrollContainerRef} onScroll={(e) => {
+                    const scrollLeft = (e.target as HTMLDivElement).scrollLeft;
+                    const teamRows = document.querySelectorAll('[data-team-row]');
+                    teamRows.forEach(row => {
+                      (row as HTMLDivElement).scrollLeft = scrollLeft;
+                    });
+                  }}>
+                    <div className="flex">
+                      {dates.map((date) =>
+                        hours.map((hour) => (
+                          <div
+                            key={`${format(date, 'yyyy-MM-dd')}-${hour}`}
+                            className="border-r p-2 text-xs font-semibold text-center"
+                            style={{ width: `${HOUR_WIDTH}px` }}
+                          >
+                            <div>{format(date, "dd MMM")}</div>
+                            <div>{hour}:00</div>
+                          </div>
+                        ))
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 {/* Team rows */}
                 {teams?.map((team) => (
                   <div key={team.id} className="flex border-b">
-                    <div className="w-32 border-r p-2 text-sm font-semibold flex items-center flex-shrink-0">
+                    <div className="w-32 border-r p-2 text-sm font-semibold flex items-center flex-shrink-0 sticky left-0 bg-white dark:bg-gray-950 z-10">
                       {team.name}
                     </div>
-                    <div className="flex overflow-x-auto">
+                    <div className="flex flex-1 overflow-x-auto" data-team-row>
                       {dates.map((date) => (
                         <TeamRow
                           key={`${team.id}-${format(date, 'yyyy-MM-dd')}`}

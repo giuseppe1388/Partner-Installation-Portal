@@ -237,4 +237,5 @@
 - [x] Aggiungere scroll orizzontale sul gantt per scorrere a destra
 - [x] Spostare il pulsante Esci in basso nel menu a sinistra
 - [x] Cambiare i colori grigio delle installazioni da trascinare (renderli più visibili)
+- [x] Bloccare la colonna "Squadre" e sincronizzare lo scroll con una sola barra
 
