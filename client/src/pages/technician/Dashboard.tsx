@@ -396,15 +396,13 @@ export default function TechnicianDashboard({ technician, onLogout }: DashboardP
               {selectedInstallation.completionLink && (
                 <div className="border-t pt-4">
                   <h3 className="font-semibold mb-3">Caricamento Documenti</h3>
-                  <a
-                    href={selectedInstallation.completionLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-primary underline"
+                  <Button
+                    onClick={() => selectedInstallation.completionLink && window.open(selectedInstallation.completionLink, '_blank')}
+                    className="w-full mb-3"
                   >
-                    <ExternalLink className="w-4 h-4" />
-                    Apri Digital Experience per caricare foto e documenti
-                  </a>
+                    <FileText className="w-4 h-4 mr-2" />
+                    Carica Moduli
+                  </Button>
                   <p className="text-xs text-muted-foreground mt-2">
                     Clicca il link per accedere alla piattaforma Salesforce e caricare i documenti dell'intervento
                   </p>

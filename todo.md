@@ -119,3 +119,9 @@
 - [x] Quando annullo uno slot, non si toglie dal calendario (RISOLTO: aggiunto filtro status === 'cancelled')
 - [x] Resize non funziona (RISOLTO: rimosso react-resizable come richiesto)
 
+
+
+## Fase 17: Miglioramenti Technician App
+- [x] Aggiungere pulsante "Carica Moduli" nella pagina dettaglio intervento
+- [x] Pulsante apre il link dal campo completionLink del record cliente
+
