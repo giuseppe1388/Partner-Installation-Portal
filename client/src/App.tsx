@@ -9,13 +9,15 @@ import PartnersPage from "./pages/admin/Partners";
 import TeamsPage from "./pages/admin/Teams";
 import InstallationsPage from "./pages/admin/Installations";
 import SettingsPage from "./pages/admin/Settings";
+import PartnerPortal from "./pages/partner/PartnerPortal";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"}>
-        <Redirect to="/admin/partners" />
+        <Redirect to="/partner" />
       </Route>
+      <Route path={"/partner"} component={PartnerPortal} />
       <Route path={"/admin/partners"} component={PartnersPage} />
       <Route path={"/admin/teams"} component={TeamsPage} />
       <Route path={"/admin/installations"} component={InstallationsPage} />

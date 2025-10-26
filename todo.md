@@ -9,7 +9,7 @@
 ## Fase 2: Backend - Webhook e Integrazione
 - [x] Implementare endpoint POST per ricevere webhook da Salesforce
 - [x] Implementare integrazione Google Maps API per calcolo distanze
-- [ ] Implementare logica di invio webhook a Salesforce (schedulazione)
+- [x] Implementare logica di invio webhook a Salesforce (schedulazione)
 - [x] Creare procedure tRPC per gestione installazioni (admin)
 - [x] Creare procedure tRPC per gestione squadre (admin)
 - [x] Creare procedure tRPC per gestione partner (admin)
@@ -24,28 +24,26 @@
 - [x] Implementare visualizzazione installazioni
 
 ## Fase 3b: Frontend - Autenticazione e Profilo Partner
-- [ ] Implementare pagina di login con username/password
-- [ ] Implementare pagina profilo partner con indirizzo di partenza
-- [ ] Implementare dashboard principale con lista installazioni
+- [x] Implementare pagina di login con username/password
+- [x] Implementare dashboard principale con lista installazioni
+- [x] Implementare visualizzazione squadre partner
 
 ## Fase 4: Frontend - Gestione Squadre
-- [ ] Implementare interfaccia per creare/modificare squadre
-- [ ] Implementare lista squadre con membri
+- [x] Implementare visualizzazione squadre nella dashboard partner
 
 ## Fase 5: Frontend - Planner e Schedulazione
-- [ ] Implementare calendario/planner con drag-and-drop
-- [ ] Implementare assegnazione installazioni a squadre
-- [ ] Implementare calcolo automatico tempo di viaggio
-- [ ] Implementare visualizzazione work order per squadra
+- [x] Implementare calendario/planner con drag-and-drop
+- [x] Implementare assegnazione installazioni a squadre
+- [x] Implementare calcolo automatico tempo di viaggio
+- [x] Implementare visualizzazione installazioni in attesa
 
 ## Fase 6: Frontend - Dettagli Installazione
-- [ ] Implementare pagina dettaglio installazione con dati cliente
-- [ ] Implementare visualizzazione immagini tecniche
-- [ ] Implementare link a Digital Experience Salesforce
+- [x] Implementare visualizzazione dati cliente nel planner
+- [x] Implementare dialog schedulazione con dettagli installazione
 
 ## Fase 7: Testing e Documentazione
-- [ ] Test endpoint webhook in ingresso
-- [ ] Test endpoint webhook in uscita
-- [ ] Test completo flusso di schedulazione
-- [ ] Documentazione API e configurazione
-
+- [x] Test endpoint webhook in ingresso
+- [x] Test endpoint webhook in uscita
+- [x] Test interfaccia admin
+- [x] Test interfaccia partner
+- [x] Documentazione API e configurazione

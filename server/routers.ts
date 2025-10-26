@@ -5,6 +5,8 @@ import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import * as db from "./db";
+import { calculateTravelTimeForPartner } from "./googleMaps";
+import { sendScheduleToSalesforce } from "./salesforceWebhook";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -164,6 +166,79 @@ export const appRouter = router({
 
     getById: adminProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
       return await db.getInstallationById(input.id);
+    }),
+  }),
+
+  // Partner Authentication
+  partner: router({
+    login: publicProcedure.input(z.object({
+      username: z.string(),
+      password: z.string(),
+    })).mutation(async ({ input }) => {
+      const partner = await db.verifyPartnerPassword(input.username, input.password);
+      if (!partner) {
+        throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid credentials' });
+      }
+      if (!partner.isActive) {
+        throw new TRPCError({ code: 'FORBIDDEN', message: 'Partner account is inactive' });
+      }
+      return {
+        id: partner.id,
+        name: partner.name,
+        email: partner.email,
+        salesforcePartnerId: partner.salesforcePartnerId,
+        startingAddress: partner.startingAddress,
+      };
+    }),
+
+    // Get partner's installations
+    myInstallations: publicProcedure.input(z.object({ partnerId: z.number() })).query(async ({ input }) => {
+      const installations = await db.getInstallationsByPartnerId(input.partnerId);
+      return installations;
+    }),
+
+    // Get partner's teams
+    myTeams: publicProcedure.input(z.object({ partnerId: z.number() })).query(async ({ input }) => {
+      const teams = await db.getTeamsByPartnerId(input.partnerId);
+      return teams;
+    }),
+
+    // Schedule installation
+    scheduleInstallation: publicProcedure.input(z.object({
+      installationId: z.number(),
+      partnerId: z.number(),
+      teamId: z.number(),
+      scheduledStart: z.string(),
+      scheduledEnd: z.string(),
+    })).mutation(async ({ input }) => {
+      // Calculate travel time
+      const installation = await db.getInstallationById(input.installationId);
+      if (!installation) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Installation not found' });
+      }
+
+      const travelTime = await calculateTravelTimeForPartner(
+        input.partnerId,
+        installation.installationAddress
+      );
+
+      // Update installation
+      const updated = await db.updateInstallation(input.installationId, {
+        partnerId: input.partnerId,
+        teamId: input.teamId,
+        scheduledStart: new Date(input.scheduledStart),
+        scheduledEnd: new Date(input.scheduledEnd),
+        travelTimeMinutes: travelTime,
+        status: 'scheduled',
+      });
+
+      // Send webhook to Salesforce
+      const webhookSent = await sendScheduleToSalesforce(input.installationId);
+      if (!webhookSent) {
+        console.warn('[Partner] Failed to send webhook to Salesforce for installation:', input.installationId);
+      }
+
+      return updated;
     }),
   }),
 });
