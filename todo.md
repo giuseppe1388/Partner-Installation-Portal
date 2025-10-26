@@ -195,6 +195,7 @@
 - [x] La lista installazioni ha una tabella con colonne (Cliente, Telefono, Indirizzo, Durata, Stato, Azioni)
 - [x] Aggiungere pulsante di ricerca nella tabella Installazioni
 - [x] Aggiungere possibilità di cambiare stato direttamente dalla tabella Installazioni
-- [x] Aggiungere navigazione tra Planner e Installazioni
-- [x] Aggiungere pulsante Esci
+- [x] Replicare esattamente la stessa grafica di prima (logo, icone, colori)
+- [x] Mantenere la stessa visualizzazione degli appuntamenti nel planner
+- [x] Usare le stesse icone per i pulsanti di navigazione
 
