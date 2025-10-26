@@ -171,7 +171,7 @@ function TeamRow({
   }));
 
   const teamInstallations = installations.filter((inst) => {
-    if (inst.teamId !== team.id || !inst.scheduledStart) return false;
+    if (inst.teamId !== team.id || !inst.scheduledStart || inst.status === 'cancelled') return false;
     const instDate = typeof inst.scheduledStart === 'string' ? parseISO(inst.scheduledStart) : inst.scheduledStart;
     return format(instDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd');
   });

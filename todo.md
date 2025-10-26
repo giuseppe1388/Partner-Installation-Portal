@@ -113,3 +113,9 @@
 - [x] Permettere modifica solo di start/end datetime (non durata)
 - [x] Aggiornare webhook a Salesforce quando modifichi le date
 
+
+
+## Bug Report
+- [x] Quando annullo uno slot, non si toglie dal calendario (RISOLTO: aggiunto filtro status === 'cancelled')
+- [x] Resize non funziona (RISOLTO: rimosso react-resizable come richiesto)
+
