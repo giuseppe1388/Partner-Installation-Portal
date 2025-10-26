@@ -67,40 +67,11 @@ export default function TechnicianDashboard({ technician, onLogout }: DashboardP
   });
 
   const updateStatusMutation = trpc.technician.updateStatus.useMutation({
-    onMutate: async (variables) => {
-      // Annulla le query in corso
-      await utils.technician.myInstallations.cancel();
-      
-      // Ottieni i dati precedenti
-      const previousData = utils.technician.myInstallations.getData({
-        teamId: technician.teamId,
-      });
-      
-      // Aggiorna i dati in cache in modo optimistico
-      if (previousData) {
-        utils.technician.myInstallations.setData(
-          { teamId: technician.teamId },
-          previousData.map((inst) =>
-            inst.id === variables.installationId
-              ? { ...inst, status: variables.status }
-              : inst
-          )
-        );
-      }
-      
-      return { previousData };
-    },
     onSuccess: () => {
+      utils.technician.myInstallations.invalidate();
       toast.success("Stato aggiornato con successo");
     },
-    onError: (error: any, variables, context: any) => {
-      // Ripristina i dati precedenti in caso di errore
-      if (context?.previousData) {
-        utils.technician.myInstallations.setData(
-          { teamId: technician.teamId },
-          context.previousData
-        );
-      }
+    onError: (error) => {
       toast.error(error.message || "Errore nell'aggiornamento dello stato");
     },
   });
@@ -130,7 +101,6 @@ export default function TechnicianDashboard({ technician, onLogout }: DashboardP
       installationId,
       status: 'in_progress',
     });
-    setIsDetailDialogOpen(false);
   };
 
   const handleCompleteWork = (installationId: number) => {
@@ -138,7 +108,6 @@ export default function TechnicianDashboard({ technician, onLogout }: DashboardP
       installationId,
       status: 'completed',
     });
-    setIsDetailDialogOpen(false);
   };
 
   const getStatusBadge = (status: string) => {
