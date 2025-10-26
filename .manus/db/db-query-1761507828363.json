@@ -1,0 +1,23 @@
+{
+  "query": "SELECT * FROM technicians LIMIT 10;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gnoqwjMueUiDos.ce00c89cbc3c --database 4uM68RE253EuzAdgQRhHTs --execute SELECT * FROM technicians LIMIT 10;",
+  "rows": [
+    {
+      "id": "1",
+      "teamId": "1",
+      "partnerId": "1",
+      "name": "Marco Bianchi",
+      "email": "marco.bianchi@example.com",
+      "phone": "+39 333 1234567",
+      "username": "marco",
+      "passwordHash": "$2b$10$B6cVXBSRU1fREXzPJggzqubtTNmpWA..d5TiSwXPHhUqN74Xgj6eK",
+      "isActive": "1",
+      "createdAt": "2025-10-26 10:22:35",
+      "updatedAt": "2025-10-26 10:22:35"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tteamId\tpartnerId\tname\temail\tphone\tusername\tpasswordHash\tisActive\tcreatedAt\tupdatedAt\n1\t1\t1\tMarco Bianchi\tmarco.bianchi@example.com\t+39 333 1234567\tmarco\t$2b$10$B6cVXBSRU1fREXzPJggzqubtTNmpWA..d5TiSwXPHhUqN74Xgj6eK\t1\t2025-10-26 10:22:35\t2025-10-26 10:22:35\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

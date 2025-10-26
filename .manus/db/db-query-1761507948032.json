@@ -1,0 +1,20 @@
+{
+  "query": "SELECT id, name, username, email, phone, teamId, partnerId, isActive FROM technicians;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gnoqwjMueUiDos.ce00c89cbc3c --database 4uM68RE253EuzAdgQRhHTs --execute SELECT id, name, username, email, phone, teamId, partnerId, isActive FROM technicians;",
+  "rows": [
+    {
+      "id": "1",
+      "name": "Marco Bianchi",
+      "username": "marco",
+      "email": "marco.bianchi@example.com",
+      "phone": "+39 333 1234567",
+      "teamId": "1",
+      "partnerId": "1",
+      "isActive": "1"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tname\tusername\temail\tphone\tteamId\tpartnerId\tisActive\n1\tMarco Bianchi\tmarco\tmarco.bianchi@example.com\t+39 333 1234567\t1\t1\t1\n",
+  "stderr": "",
+  "execution_time_ms": 52
+}

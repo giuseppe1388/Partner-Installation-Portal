@@ -550,13 +550,26 @@ function PendingInstallationItem({ installation }: { installation: Installation 
   ];
   const colorIndex = installation.id % colors.length;
 
+  // Mappa stato a colore badge
+  const statusBadgeColor: Record<string, string> = {
+    pending: "bg-gray-500",
+    scheduled: "bg-blue-500",
+    confirmed: "bg-purple-500",
+    in_progress: "bg-yellow-500",
+    completed: "bg-green-500",
+    cancelled: "bg-red-500",
+  };
+
   return (
     <div
       ref={drag as any}
-      className={`p-3 ${colors[colorIndex]} rounded cursor-move text-sm font-medium ${
+      className={`p-3 ${colors[colorIndex]} rounded cursor-move text-sm font-medium relative ${
         isDragging ? "opacity-50" : ""
       }`}
     >
+      {/* Badge stato in alto a destra */}
+      <div className={`absolute top-2 right-2 w-3 h-3 rounded-full ${statusBadgeColor[installation.status] || statusBadgeColor.pending}`} />
+      
       <div className="font-medium text-gray-900 dark:text-white">{installation.customerName}</div>
       <div className="text-xs text-gray-700 dark:text-gray-300">{installation.installationAddress}</div>
       <div className="text-xs text-gray-700 dark:text-gray-300">{installation.durationMinutes} min</div>

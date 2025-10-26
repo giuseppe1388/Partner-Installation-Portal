@@ -1,0 +1,30 @@
+{
+  "query": "SELECT * FROM teams;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gnoqwjMueUiDos.ce00c89cbc3c --database 4uM68RE253EuzAdgQRhHTs --execute SELECT * FROM teams;",
+  "rows": [
+    {
+      "id": "1",
+      "salesforceTeamId": "TEAM001",
+      "partnerId": "1",
+      "name": "Squadra 1",
+      "description": "Squadra di test",
+      "isActive": "1",
+      "createdAt": "2025-10-26 09:55:57",
+      "updatedAt": "2025-10-26 09:55:57"
+    },
+    {
+      "id": "2",
+      "salesforceTeamId": "TEAM002",
+      "partnerId": "1",
+      "name": "Squadra 2",
+      "description": "NULL",
+      "isActive": "1",
+      "createdAt": "2025-10-26 10:28:55",
+      "updatedAt": "2025-10-26 10:28:55"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tsalesforceTeamId\tpartnerId\tname\tdescription\tisActive\tcreatedAt\tupdatedAt\n1\tTEAM001\t1\tSquadra 1\tSquadra di test\t1\t2025-10-26 09:55:57\t2025-10-26 09:55:57\n2\tTEAM002\t1\tSquadra 2\tNULL\t1\t2025-10-26 10:28:55\t2025-10-26 10:28:55\n",
+  "stderr": "",
+  "execution_time_ms": 186
+}

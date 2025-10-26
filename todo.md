@@ -242,3 +242,12 @@
 - [x] Sincronizzare correttamente lo scroll - le righe non si muovono quando scrolli l'header
 - [x] Rimuovere la barra di scroll dalle righe - lasciare solo una nel header
 
+
+
+## Fase 29: Badge Stato Colorato negli Slot "Da Schedulare"
+- [x] Aggiungere piccolo badge colorato in alto a destra degli slot "Da Schedulare"
+- [x] Il badge mostra lo stato dell'installazione (colore corrispondente)
+- [x] Mantenere lo stesso colore di sfondo per gli slot (rosa, blu, viola)
+- [x] Il badge deve essere ben visibile e piccolo
+
+
