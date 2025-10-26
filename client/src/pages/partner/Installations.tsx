@@ -189,18 +189,18 @@ export default function Installations({ partner }: InstallationsProps) {
         </div>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        <Table>
+      <div className="border rounded-lg overflow-x-auto">
+        <Table className="min-w-full">
           <TableHeader>
             <TableRow className="bg-muted">
-              <TableHead>Cliente</TableHead>
-              <TableHead>Telefono</TableHead>
-              <TableHead>Indirizzo</TableHead>
-              <TableHead>Durata</TableHead>
-              <TableHead>Inizio</TableHead>
-              <TableHead>Fine</TableHead>
-              <TableHead>Stato</TableHead>
-              <TableHead>Azioni</TableHead>
+              <TableHead className="w-[150px]">Cliente</TableHead>
+              <TableHead className="w-[120px]">Telefono</TableHead>
+              <TableHead className="w-[200px]">Indirizzo</TableHead>
+              <TableHead className="w-[80px]">Durata</TableHead>
+              <TableHead className="w-[140px]">Inizio</TableHead>
+              <TableHead className="w-[140px]">Fine</TableHead>
+              <TableHead className="w-[100px]">Stato</TableHead>
+              <TableHead className="w-[280px]">Azioni</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

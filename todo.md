@@ -370,3 +370,11 @@
 - [x] Nella tabella installazioni: aggiungere "Rifiuta Incarico" (solo se pending)
 
 
+
+
+## Fase 42: Rendere la Tabella Installazioni Responsive
+- [x] Rimuovere overflow-x scroll dalla tabella
+- [x] Adattare la tabella alla dimensione della pagina
+- [x] Ridurre la larghezza delle colonne per evitare scroll orizzontale
+
+
