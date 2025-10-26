@@ -69,6 +69,12 @@ export default function Installations({ partner }: InstallationsProps) {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedInstallation, setSelectedInstallation] = useState<Installation | null>(null);
   const [newStatus, setNewStatus] = useState<string>("");
+  const [showViewDialog, setShowViewDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState('');
+
+  const utils = trpc.useUtils();
 
   const { data: installations = [], isLoading } = trpc.partner.getInstallations.useQuery(
     { partnerId: partner.id },
@@ -83,6 +89,19 @@ export default function Installations({ partner }: InstallationsProps) {
     },
     onError: (error) => {
       toast.error(error.message || "Errore nell'aggiornamento dello stato");
+    },
+  });
+
+  const rejectMutation = trpc.partner.rejectInstallation.useMutation({
+    onSuccess: () => {
+      utils.partner.getInstallations.invalidate();
+      toast.success("Incarico rifiutato con successo");
+      setShowRejectDialog(false);
+      setSelectedInstallation(null);
+      setRejectionReason('');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Errore nel rifiuto dell'incarico");
     },
   });
 
@@ -105,6 +124,21 @@ export default function Installations({ partner }: InstallationsProps) {
   const handleChangeStatus = (installation: Installation) => {
     setSelectedInstallation(installation);
     setNewStatus(installation.status);
+  };
+
+  const handleView = (installation: Installation) => {
+    setSelectedInstallation(installation);
+    setShowViewDialog(true);
+  };
+
+  const handleEdit = (installation: Installation) => {
+    setSelectedInstallation(installation);
+    setShowEditDialog(true);
+  };
+
+  const handleReject = (installation: Installation) => {
+    setSelectedInstallation(installation);
+    setShowRejectDialog(true);
   };
 
   const handleSaveStatus = () => {
@@ -204,13 +238,31 @@ export default function Installations({ partner }: InstallationsProps) {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleChangeStatus(inst)}
-                    >
-                      Cambia Stato
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleView(inst)}
+                      >
+                        Visualizza
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleEdit(inst)}
+                      >
+                        Modifica
+                      </Button>
+                      {inst.status === 'pending' && (
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleReject(inst)}
+                        >
+                          Rifiuta
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -332,6 +384,123 @@ export default function Installations({ partner }: InstallationsProps) {
               ) : (
                 "Salva"
               )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Visualizza */}
+      <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Dettagli Installazione</DialogTitle>
+            <DialogDescription>
+              {selectedInstallation?.customerName} - {selectedInstallation?.installationAddress}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedInstallation && (
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="font-semibold">Cliente:</span>
+                <p>{selectedInstallation.customerName}</p>
+              </div>
+              <div>
+                <span className="font-semibold">Stato:</span>
+                <Badge className={`${STATUS_COLORS[selectedInstallation.status]?.bg || "bg-gray-100"} ${STATUS_COLORS[selectedInstallation.status]?.text || "text-black"}`}>
+                  {STATUS_COLORS[selectedInstallation.status]?.label || selectedInstallation.status}
+                </Badge>
+              </div>
+              <div className="col-span-2">
+                <span className="font-semibold">Indirizzo Installazione:</span>
+                <p>{selectedInstallation.installationAddress}</p>
+              </div>
+              {selectedInstallation.customerPhone && (
+                <div>
+                  <span className="font-semibold">Telefono:</span>
+                  <p>{selectedInstallation.customerPhone}</p>
+                </div>
+              )}
+              {selectedInstallation.customerEmail && (
+                <div>
+                  <span className="font-semibold">Email:</span>
+                  <p>{selectedInstallation.customerEmail}</p>
+                </div>
+              )}
+              {selectedInstallation.technicalNotes && (
+                <div className="col-span-2">
+                  <span className="font-semibold">Note Tecniche:</span>
+                  <p>{selectedInstallation.technicalNotes}</p>
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter>
+            <Button onClick={() => setShowViewDialog(false)}>Chiudi</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Modifica */}
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Modifica Installazione</DialogTitle>
+            <DialogDescription>
+              Modifica i dettagli dell'installazione
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm text-gray-500">Funzionalità in sviluppo...</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEditDialog(false)}>Annulla</Button>
+            <Button onClick={() => setShowEditDialog(false)}>Salva</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Rifiuta */}
+      <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rifiuta Incarico</DialogTitle>
+            <DialogDescription>
+              Sei sicuro di voler rifiutare l'incarico per {selectedInstallation?.customerName}?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label>Motivazione (obbligatoria, minimo 10 caratteri):</Label>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                className="w-full mt-2 px-3 py-2 border rounded-md"
+                rows={4}
+                placeholder="Inserisci la motivazione del rifiuto..."
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                {rejectionReason.length}/10 caratteri minimi
+              </p>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => {
+              setShowRejectDialog(false);
+              setRejectionReason('');
+            }}>Annulla</Button>
+            <Button 
+              variant="destructive"
+              disabled={rejectionReason.trim().length < 10 || rejectMutation.isPending}
+              onClick={() => {
+                if (selectedInstallation && rejectionReason.trim().length >= 10) {
+                  rejectMutation.mutate({
+                    installationId: selectedInstallation.id,
+                    rejectionReason: rejectionReason.trim(),
+                  });
+                }
+              }}
+            >
+              {rejectMutation.isPending ? 'Rifiuto in corso...' : 'Conferma Rifiuto'}
             </Button>
           </DialogFooter>
         </DialogContent>

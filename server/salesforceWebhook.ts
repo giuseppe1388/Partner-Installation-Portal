@@ -189,3 +189,58 @@ export async function sendRejectionToSalesforce(installationId: number, rejectio
   }
 }
 
+
+
+
+/**
+ * Send acceptance data to Salesforce webhook
+ * @param installationId Installation ID
+ * @returns Success status
+ */
+export async function sendAcceptanceToSalesforce(installationId: number): Promise<boolean> {
+  try {
+    const installation = await db.getInstallationById(installationId);
+    if (!installation) {
+      console.error('[SalesforceWebhook] Installation not found:', installationId);
+      return false;
+    }
+
+    const webhookConfig = await db.getApiConfig('salesforce_webhook_url');
+    if (!webhookConfig || !webhookConfig.configValue) {
+      console.warn('[SalesforceWebhook] Salesforce webhook URL not configured');
+      return false;
+    }
+
+    const webhookUrl = webhookConfig.configValue;
+
+    const payload = {
+      eventType: 'acceptance',
+      ServiceAppointmentId: installation.serviceAppointmentId,
+      Status: 'Accepted',
+    };
+
+    console.log('[SalesforceWebhook] Sending acceptance payload to Salesforce:', payload);
+
+    const response = await fetch(webhookUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      console.error('[SalesforceWebhook] Failed to send acceptance webhook:', response.statusText);
+      return false;
+    }
+
+    const responseData = await response.json();
+    console.log('[SalesforceWebhook] Acceptance webhook sent successfully:', responseData);
+
+    return true;
+  } catch (error) {
+    console.error('[SalesforceWebhook] Error sending acceptance webhook to Salesforce:', error);
+    return false;
+  }
+}
+

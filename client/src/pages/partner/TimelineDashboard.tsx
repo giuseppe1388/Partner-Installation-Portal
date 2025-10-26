@@ -350,6 +350,24 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
     });
   };
 
+  const acceptMutation = trpc.partner.acceptInstallation.useMutation({
+    onSuccess: () => {
+      utils.partner.myInstallations.invalidate();
+      toast.success("Incarico accettato con successo");
+      setSelectedInstallation(null);
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Errore nell'accettazione dell'incarico");
+    },
+  });
+
+  const handleAccept = () => {
+    if (!selectedInstallation) return;
+    acceptMutation.mutate({
+      installationId: selectedInstallation.id,
+    });
+  };
+
   // Installazioni da schedulare (pending + cancelled) - escludi rejected
   const unscheduledInstallations = useMemo(() => {
     if (!installations) return [];
@@ -637,12 +655,21 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
             
             <div className="mt-6 flex gap-2">
               {selectedInstallation.status === 'pending' && (
-                <button 
-                  onClick={() => setShowRejectDialog(true)} 
-                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                >
-                  Rifiuta Incarico
-                </button>
+                <>
+                  <button 
+                    onClick={handleAccept}
+                    disabled={acceptMutation.isPending}
+                    className="flex-1 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {acceptMutation.isPending ? 'Accettazione...' : 'Accetta Incarico'}
+                  </button>
+                  <button 
+                    onClick={() => setShowRejectDialog(true)} 
+                    className="flex-1 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                  >
+                    Rifiuta Incarico
+                  </button>
+                </>
               )}
               <button onClick={() => setSelectedInstallation(null)} className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded hover:bg-gray-300 dark:hover:bg-gray-600">
                 Chiudi

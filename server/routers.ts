@@ -6,7 +6,7 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import * as db from "./db";
 import { calculateTravelTimeForPartner } from "./googleMaps";
-import { sendScheduleToSalesforce, sendCancellationToSalesforce, sendRejectionToSalesforce } from "./salesforceWebhook";
+import { sendScheduleToSalesforce, sendCancellationToSalesforce, sendRejectionToSalesforce, sendAcceptanceToSalesforce } from "./salesforceWebhook";
 
 // Admin-only procedure
 const adminProcedure = protectedProcedure.use(({ ctx, next }) => {
@@ -274,7 +274,7 @@ export const appRouter = router({
 
     changeStatus: publicProcedure.input(z.object({
       installationId: z.number(),
-      status: z.enum(['pending', 'scheduled', 'in_progress', 'completed', 'cancelled', 'rejected']),
+      status: z.enum(['pending', 'accepted', 'scheduled', 'in_progress', 'completed', 'cancelled', 'rejected']),
     })).mutation(async ({ input }) => {
       const installation = await db.getInstallationById(input.installationId);
       if (!installation) {
@@ -323,6 +323,29 @@ export const appRouter = router({
       const webhookSent = await sendRejectionToSalesforce(input.installationId, input.rejectionReason);
       if (!webhookSent) {
         console.warn('[Partner] Failed to send rejection webhook to Salesforce for installation:', input.installationId);
+      }
+
+      return updated;
+    }),
+
+    // Accept installation
+    acceptInstallation: publicProcedure.input(z.object({
+      installationId: z.number(),
+    })).mutation(async ({ input }) => {
+      const installation = await db.getInstallationById(input.installationId);
+      if (!installation) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Installation not found' });
+      }
+
+      // Update installation status to accepted
+      const updated = await db.updateInstallation(input.installationId, {
+        status: 'accepted',
+      });
+
+      // Send acceptance webhook to Salesforce
+      const webhookSent = await sendAcceptanceToSalesforce(input.installationId);
+      if (!webhookSent) {
+        console.warn('[Partner] Failed to send acceptance webhook to Salesforce for installation:', input.installationId);
       }
 
       return updated;

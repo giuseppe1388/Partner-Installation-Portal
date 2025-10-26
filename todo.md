@@ -356,3 +356,17 @@
 - [x] Quando rifiutato: nascondere al partner (ma rimane nel sistema per altri partner)
 
 
+
+
+## Fase 41: Pulsante Accetta Incarico e Modifica Tabella
+- [x] Aggiungere stato "accepted" al database
+- [x] Creare webhook sendAcceptanceToSalesforce con eventType "acceptance"
+- [x] Aggiungere pulsante "Accetta Incarico" nel popup dei dettagli
+- [x] Quando accettato: invia webhook a Salesforce
+- [x] Quando accettato: nascondere pulsante "Rifiuta Incarico"
+- [x] Nella tabella installazioni: togliere "Cambia Stato"
+- [x] Nella tabella installazioni: aggiungere "Visualizza" (apre popup)
+- [x] Nella tabella installazioni: aggiungere "Modifica" (per modificare dettagli)
+- [x] Nella tabella installazioni: aggiungere "Rifiuta Incarico" (solo se pending)
+
+

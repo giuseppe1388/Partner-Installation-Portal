@@ -1,0 +1,1 @@
+ALTER TABLE `installations` MODIFY COLUMN `status` enum('pending','accepted','scheduled','in_progress','completed','cancelled','rejected') NOT NULL DEFAULT 'pending';
