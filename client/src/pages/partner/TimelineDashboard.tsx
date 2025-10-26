@@ -498,29 +498,31 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                 </div>
 
                 {/* Team rows */}
-                {teams?.map((team) => (
-                  <div key={team.id} className="flex border-b">
-                    <div className="w-32 border-r p-2 text-sm font-semibold flex items-center flex-shrink-0 sticky left-0 bg-white dark:bg-gray-950 z-10">
-                      {team.name}
+                <div className="overflow-x-hidden">
+                  {teams?.map((team) => (
+                    <div key={team.id} className="flex border-b">
+                      <div className="w-32 border-r p-2 text-sm font-semibold flex items-center flex-shrink-0 sticky left-0 bg-white dark:bg-gray-950 z-10">
+                        {team.name}
+                      </div>
+                      <div className="flex flex-1" data-team-row>
+                        {dates.map((date) => (
+                          <TeamRow
+                            key={`${team.id}-${format(date, 'yyyy-MM-dd')}`}
+                            team={team}
+                            date={date}
+                            installations={scheduledInstallations}
+                            hours={hours}
+                            onDrop={handleDrop}
+                            onBlockClick={(inst) => {
+                              // Placeholder for future detail view
+                            }}
+                            onStatusChange={handleStatusChange}
+                          />
+                        ))}
+                      </div>
                     </div>
-                    <div className="flex flex-1 overflow-x-auto" data-team-row>
-                      {dates.map((date) => (
-                        <TeamRow
-                          key={`${team.id}-${format(date, 'yyyy-MM-dd')}`}
-                          team={team}
-                          date={date}
-                          installations={scheduledInstallations}
-                          hours={hours}
-                          onDrop={handleDrop}
-                          onBlockClick={(inst) => {
-                            // Placeholder for future detail view
-                          }}
-                          onStatusChange={handleStatusChange}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
