@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { trpc } from "@/lib/trpc";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -160,26 +160,19 @@ function TeamRow({
   onBlockClick: (installation: Installation) => void;
   onStatusChange?: (installationId: number, status: string) => void;
 }) {
+  const rowRef = useRef<HTMLDivElement>(null);
+  
   const [{ isOver }, drop] = useDrop(() => ({
     accept: ITEM_TYPE,
     drop: (item: { installation: Installation }, monitor) => {
       // Ottenere le coordinate del drop
       const clientOffset = monitor.getClientOffset();
-      if (!clientOffset) {
+      if (!clientOffset || !rowRef.current) {
         onDrop(item.installation, team, date, hours[0], 0);
         return;
       }
 
-      // Ottenere la posizione dell'elemento drop (il contenitore della riga)
-      const dropElement = (drop as any).getHandlerId?.();
-      const dropNode = document.querySelector('[data-team-row]');
-      
-      if (!dropNode) {
-        onDrop(item.installation, team, date, hours[0], 0);
-        return;
-      }
-
-      const rect = dropNode.getBoundingClientRect();
+      const rect = rowRef.current.getBoundingClientRect();
       const relativeX = clientOffset.x - rect.left;
       
       // Calcolare l'ora e i minuti basati sulla posizione X
@@ -208,6 +201,8 @@ function TeamRow({
       isOver: !!monitor.isOver(),
     }),
   }));
+  
+  drop(rowRef);
 
   const teamInstallations = installations.filter((inst) => {
     if (inst.teamId !== team.id || !inst.scheduledStart || inst.status === 'cancelled') return false;
@@ -217,8 +212,7 @@ function TeamRow({
 
   return (
     <div
-      ref={drop as any}
-      data-team-row
+      ref={rowRef}
       className={`relative border-b border-r ${isOver ? "bg-blue-50 dark:bg-blue-950" : ""}`}
       style={{ height: `${ROW_HEIGHT}px`, minWidth: `${hours.length * HOUR_WIDTH}px` }}
     >

@@ -163,3 +163,21 @@
 - [x] Arrotondare automaticamente l'ora di inizio agli slot di 15 minuti più vicini
 - [x] Testare il drag-and-drop con snapping
 
+
+## Fase 22: Aggiornamenti Live senza Refresh Pagina
+- [x] Implementare optimistic updates nel planner partner
+- [x] Implementare optimistic updates nella technician app
+- [x] Aggiornare lo stato degli appuntamenti in tempo reale senza refresh
+- [x] Ripristinare i dati in caso di errore
+
+## Fase 23: Snapping a 15 Minuti Corretto con useRef
+- [x] Implementare logica di snapping a intervalli di 15 minuti
+- [x] Usare useRef per ottenere un riferimento affidabile alla riga
+- [x] Arrotondare automaticamente l'ora di inizio agli slot di 15 minuti più vicini
+
+## Bug da Risolvere
+
+- [ ] Pagina Installazioni deve avere una tabella con ricerca e cambio stato inline
+- [ ] Aggiungere pulsante di ricerca nella tabella Installazioni
+- [ ] Aggiungere possibilità di cambiare stato direttamente dalla tabella Installazioni
+
