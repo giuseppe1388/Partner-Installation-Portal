@@ -84,3 +84,6 @@
 - [x] Creare pagina dettaglio intervento con pulsante "Chiama"
 - [x] Mostrare allegati e link caricamento documenti (Digital Experience)
 - [x] Implementare pulsanti "Inizia Lavoro" e "Completa" per aggiornare stato
+
+## Fase 13: Miglioramenti UI Partner Portal
+- [x] Sostituire menu tab orizzontale con menu laterale fisso (stile admin)
