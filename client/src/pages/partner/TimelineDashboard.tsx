@@ -5,15 +5,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { format, addDays, startOfDay, parseISO } from "date-fns";
 import { it } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -283,17 +275,8 @@ function TeamRow({
 }
 
 export default function TimelineDashboard({ partner, onLogout }: DashboardProps) {
-  const [selectedInstallation, setSelectedInstallation] = useState<Installation | null>(null);
-  const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
-  const [isEditDateDialogOpen, setIsEditDateDialogOpen] = useState(false);
-  const [editStartDate, setEditStartDate] = useState("");
-  const [editStartTime, setEditStartTime] = useState("");
-  const [editEndDate, setEditEndDate] = useState("");
-  const [editEndTime, setEditEndTime] = useState("");
   const [currentDate, setCurrentDate] = useState(startOfDay(new Date()));
   const [daysToShow, setDaysToShow] = useState(1);
-  const [activeView, setActiveView] = useState<"planner" | "installations">("planner");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
 
   const utils = trpc.useUtils();
 
@@ -337,13 +320,6 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
     return installations.filter((inst) => inst.status !== "pending" && inst.scheduledStart);
   }, [installations]);
 
-  // Installazioni filtrate per la lista completa
-  const filteredInstallations = useMemo(() => {
-    if (!installations) return [];
-    if (filterStatus === "all") return installations;
-    return installations.filter((inst) => inst.status === filterStatus);
-  }, [installations, filterStatus]);
-
   const dates = useMemo(() => {
     const result = [];
     for (let i = 0; i < daysToShow; i++) {
@@ -379,28 +355,6 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
     });
   };
 
-  const handleEditDates = () => {
-    if (!selectedInstallation) return;
-
-    const startDate = new Date(editStartDate);
-    const [startHour, startMinute] = editStartTime.split(":").map(Number);
-    startDate.setHours(startHour, startMinute, 0, 0);
-
-    const endDate = new Date(editEndDate);
-    const [endHour, endMinute] = editEndTime.split(":").map(Number);
-    endDate.setHours(endHour, endMinute, 0, 0);
-
-    scheduleMutation.mutate({
-      installationId: selectedInstallation.id,
-      partnerId: partner.id,
-      teamId: selectedInstallation.teamId || 0,
-      scheduledStart: startDate.toISOString(),
-      scheduledEnd: endDate.toISOString(),
-    });
-
-    setIsEditDateDialogOpen(false);
-  };
-
   if (loadingInstallations || loadingTeams) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -411,214 +365,156 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
 
   return (
     <div className="w-full h-full flex flex-col">
-      <div className="flex gap-2 p-4 border-b">
-        <Button
-          variant={activeView === "planner" ? "default" : "outline"}
-          onClick={() => setActiveView("planner")}
-        >
-          Planner
-        </Button>
-        <Button
-          variant={activeView === "installations" ? "default" : "outline"}
-          onClick={() => setActiveView("installations")}
-        >
-          Installazioni
-        </Button>
-      </div>
+      <div className="flex-1 overflow-hidden flex">
+        {/* Left Sidebar - Unscheduled Installations */}
+        <div className="w-64 border-r overflow-y-auto p-4 space-y-2">
+          <h3 className="font-semibold text-sm">Da Schedulare</h3>
+          <p className="text-xs text-gray-500">Trascina nel calendario</p>
+          {unscheduledInstallations.map((inst) => (
+            <div
+              key={inst.id}
+              className="p-3 bg-gray-100 dark:bg-gray-800 rounded cursor-move hover:bg-gray-200 dark:hover:bg-gray-700 text-sm"
+            >
+              <div className="font-medium">{inst.customerName}</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">{inst.installationAddress}</div>
+              <div className="text-xs text-gray-600 dark:text-gray-400">{inst.durationMinutes} min</div>
+            </div>
+          ))}
 
-      {activeView === "planner" ? (
-        <div className="flex-1 overflow-hidden flex">
-          {/* Left Sidebar - Unscheduled Installations */}
-          <div className="w-64 border-r overflow-y-auto p-4 space-y-2">
-            <h3 className="font-semibold text-sm">Da Schedulare</h3>
-            <p className="text-xs text-gray-500">Trascina nel calendario</p>
-            {unscheduledInstallations.map((inst) => (
-              <div
-                key={inst.id}
-                className="p-3 bg-gray-100 dark:bg-gray-800 rounded cursor-move hover:bg-gray-200 dark:hover:bg-gray-700 text-sm"
-              >
-                <div className="font-medium">{inst.customerName}</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">{inst.installationAddress}</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">{inst.durationMinutes} min</div>
+          <div className="mt-8 pt-4 border-t">
+            <h3 className="font-semibold text-sm mb-2">Legenda</h3>
+            <div className="space-y-1 text-xs">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-gray-400" />
+                In Attesa
               </div>
-            ))}
-
-            <div className="mt-8 pt-4 border-t">
-              <h3 className="font-semibold text-sm mb-2">Legenda</h3>
-              <div className="space-y-1 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-gray-400" />
-                  In Attesa
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-blue-500" />
-                  Schedulata
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-yellow-500" />
-                  In Corso
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-green-500" />
-                  Completata
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded bg-red-500" />
-                  Annullata
-                </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-blue-500" />
+                Schedulata
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-yellow-500" />
+                In Corso
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-green-500" />
+                Completata
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded bg-red-500" />
+                Annullata
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Main Content - Calendar */}
-          <div className="flex-1 overflow-auto">
-            <DndProvider backend={HTML5Backend}>
-              <div className="p-4 space-y-4">
-                {/* Date Navigation */}
-                <div className="flex items-center justify-between">
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentDate(addDays(currentDate, -1))}
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentDate(startOfDay(new Date()))}
-                    >
-                      Oggi
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentDate(addDays(currentDate, 1))}
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </Button>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      variant={daysToShow === 1 ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setDaysToShow(1)}
-                    >
-                      Oggi
-                    </Button>
-                    <Button
-                      variant={daysToShow === 3 ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setDaysToShow(3)}
-                    >
-                      3gg
-                    </Button>
-                    <Button
-                      variant={daysToShow === 7 ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setDaysToShow(7)}
-                    >
-                      1sett
-                    </Button>
-                  </div>
-                  <div className="text-sm font-semibold">
-                    {format(currentDate, "d MMM yyyy", { locale: it })}
+        {/* Main Content - Calendar */}
+        <div className="flex-1 overflow-auto">
+          <DndProvider backend={HTML5Backend}>
+            <div className="p-4 space-y-4">
+              {/* Date Navigation */}
+              <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentDate(addDays(currentDate, -1))}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentDate(startOfDay(new Date()))}
+                  >
+                    Oggi
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentDate(addDays(currentDate, 1))}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant={daysToShow === 1 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setDaysToShow(1)}
+                  >
+                    Oggi
+                  </Button>
+                  <Button
+                    variant={daysToShow === 3 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setDaysToShow(3)}
+                  >
+                    3gg
+                  </Button>
+                  <Button
+                    variant={daysToShow === 7 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setDaysToShow(7)}
+                  >
+                    1sett
+                  </Button>
+                </div>
+                <div className="text-sm font-semibold">
+                  {format(currentDate, "d MMM yyyy", { locale: it })}
+                </div>
+              </div>
+
+              {/* Calendar Grid */}
+              <div className="border rounded-lg overflow-hidden">
+                {/* Header with hours */}
+                <div className="flex border-b bg-gray-50 dark:bg-gray-900">
+                  <div className="w-32 border-r p-2 text-sm font-semibold">Squadre</div>
+                  <div className="flex">
+                    {dates.map((date) =>
+                      hours.map((hour) => (
+                        <div
+                          key={`${format(date, 'yyyy-MM-dd')}-${hour}`}
+                          className="border-r p-2 text-xs font-semibold text-center"
+                          style={{ width: `${HOUR_WIDTH}px` }}
+                        >
+                          <div>{format(date, "dd MMM")}</div>
+                          <div>{hour}:00</div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
 
-                {/* Calendar Grid */}
-                <div className="border rounded-lg overflow-hidden">
-                  {/* Header with hours */}
-                  <div className="flex border-b bg-gray-50 dark:bg-gray-900">
-                    <div className="w-32 border-r p-2 text-sm font-semibold">Squadre</div>
+                {/* Team rows */}
+                {teams?.map((team) => (
+                  <div key={team.id} className="flex border-b">
+                    <div className="w-32 border-r p-2 text-sm font-semibold flex items-center">
+                      {team.name}
+                    </div>
                     <div className="flex">
-                      {dates.map((date) =>
-                        hours.map((hour) => (
-                          <div
-                            key={`${format(date, 'yyyy-MM-dd')}-${hour}`}
-                            className="border-r p-2 text-xs font-semibold text-center"
-                            style={{ width: `${HOUR_WIDTH}px` }}
-                          >
-                            <div>{format(date, "dd MMM")}</div>
-                            <div>{hour}:00</div>
-                          </div>
-                        ))
-                      )}
+                      {dates.map((date) => (
+                        <TeamRow
+                          key={`${team.id}-${format(date, 'yyyy-MM-dd')}`}
+                          team={team}
+                          date={date}
+                          installations={scheduledInstallations}
+                          hours={hours}
+                          onDrop={handleDrop}
+                          onBlockClick={(inst) => {
+                            // Placeholder for future detail view
+                          }}
+                          onStatusChange={handleStatusChange}
+                        />
+                      ))}
                     </div>
                   </div>
-
-                  {/* Team rows */}
-                  {teams?.map((team) => (
-                    <div key={team.id} className="flex border-b">
-                      <div className="w-32 border-r p-2 text-sm font-semibold flex items-center">
-                        {team.name}
-                      </div>
-                      <div className="flex">
-                        {dates.map((date) => (
-                          <TeamRow
-                            key={`${team.id}-${format(date, 'yyyy-MM-dd')}`}
-                            team={team}
-                            date={date}
-                            installations={scheduledInstallations}
-                            hours={hours}
-                            onDrop={handleDrop}
-                            onBlockClick={(inst) => {
-                              setSelectedInstallation(inst);
-                              setIsDetailDialogOpen(true);
-                            }}
-                            onStatusChange={handleStatusChange}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </DndProvider>
-          </div>
-        </div>
-      ) : (
-        <div className="flex-1 overflow-auto p-4">
-          <div className="space-y-4">
-            <div className="flex gap-4">
-              <div className="flex-1">
-                <label className="text-sm font-medium">Filtro Stato</label>
-                <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tutti gli stati</SelectItem>
-                    <SelectItem value="pending">In Attesa</SelectItem>
-                    <SelectItem value="scheduled">Schedulato</SelectItem>
-                    <SelectItem value="in_progress">In Corso</SelectItem>
-                    <SelectItem value="completed">Completato</SelectItem>
-                    <SelectItem value="cancelled">Annullato</SelectItem>
-                  </SelectContent>
-                </Select>
+                ))}
               </div>
             </div>
-
-            <div className="space-y-2">
-              {filteredInstallations.map((inst) => (
-                <Card key={inst.id}>
-                  <CardContent className="pt-6">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="font-semibold">{inst.customerName}</h3>
-                        <p className="text-sm text-gray-600">{inst.installationAddress}</p>
-                        <p className="text-sm text-gray-600">{inst.durationMinutes} min</p>
-                      </div>
-                      <Badge>{inst.status}</Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
+          </DndProvider>
         </div>
-      )}
+      </div>
     </div>
   );
 }

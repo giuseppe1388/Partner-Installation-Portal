@@ -188,3 +188,13 @@
 - [ ] Aggiungere pulsante di ricerca nella tabella Installazioni
 - [ ] Aggiungere possibilità di cambiare stato direttamente dalla tabella Installazioni
 
+
+
+## Fase 25: Separazione Planner e Installazioni
+- [x] Separare la lista delle installazioni dal planner in due pagine distinte
+- [x] La lista installazioni ha una tabella con colonne (Cliente, Telefono, Indirizzo, Durata, Stato, Azioni)
+- [x] Aggiungere pulsante di ricerca nella tabella Installazioni
+- [x] Aggiungere possibilità di cambiare stato direttamente dalla tabella Installazioni
+- [x] Aggiungere navigazione tra Planner e Installazioni
+- [x] Aggiungere pulsante Esci
+
