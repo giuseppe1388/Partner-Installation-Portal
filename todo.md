@@ -149,3 +149,12 @@
 
 - [x] Appuntamenti annullati visibili nella technician app (RISOLTO: aggiunto filtro status !== 'cancelled')
 
+
+
+## Fase 20: Pagina Gestione Installazioni nel Partner Portal
+- [x] Creare pagina tabella con tutte le installazioni
+- [x] Aggiungere colonna stato con dropdown per cambio stato
+- [x] Implementare filtro per stato
+- [x] Implementare ricerca unificata (nome, cognome, telefono, indirizzo)
+- [x] Aggiungere pulsante per inviare webhook a Salesforce quando cambio stato
+

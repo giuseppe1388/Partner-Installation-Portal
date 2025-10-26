@@ -266,6 +266,12 @@ export const appRouter = router({
       return updated;
     }),
 
+    // Get all installations for partner
+    getInstallations: publicProcedure.input(z.object({ partnerId: z.number() })).query(async ({ input }) => {
+      const installations = await db.getInstallationsByPartnerId(input.partnerId);
+      return installations;
+    }),
+
     changeStatus: publicProcedure.input(z.object({
       installationId: z.number(),
       status: z.enum(['pending', 'scheduled', 'in_progress', 'completed', 'cancelled']),

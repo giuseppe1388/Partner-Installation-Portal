@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import PartnerLogin from "./Login";
 import TimelineDashboard from "./TimelineDashboard";
+import Installations from "./Installations";
 
 export default function PartnerPortal() {
   const [partner, setPartner] = useState<any>(null);
@@ -30,6 +31,11 @@ export default function PartnerPortal() {
     return <PartnerLogin onLoginSuccess={handleLoginSuccess} />;
   }
 
-  return <TimelineDashboard partner={partner} onLogout={handleLogout} />;
+  return (
+    <div>
+      <TimelineDashboard partner={partner} onLogout={handleLogout} />
+      <Installations partner={partner} />
+    </div>
+  );
 }
 
