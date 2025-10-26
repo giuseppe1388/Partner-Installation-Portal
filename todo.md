@@ -87,3 +87,10 @@
 
 ## Fase 13: Miglioramenti UI Partner Portal
 - [x] Sostituire menu tab orizzontale con menu laterale fisso (stile admin)
+
+## Fase 14: Resize Blocchi Planner
+- [x] Implementare resize dei blocchi installazioni (trascinare bordi)
+- [x] Permettere aumento/diminuzione durata slot
+- [x] Aggiornare ore di fine quando resize
+- [x] Inviare durata modificata nel webhook a Salesforce
+

@@ -240,6 +240,31 @@ export const appRouter = router({
 
       return updated;
     }),
+
+    updateInstallationDuration: publicProcedure.input(z.object({
+      installationId: z.number(),
+      durationMinutes: z.number().min(30).max(480),
+    })).mutation(async ({ input }) => {
+      const installation = await db.getInstallationById(input.installationId);
+      if (!installation) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Installation not found' });
+      }
+
+      const updated = await db.updateInstallation(input.installationId, {
+        durationMinutes: input.durationMinutes,
+      });
+
+      if (installation.scheduledStart) {
+        const startTime = new Date(installation.scheduledStart);
+        const endTime = new Date(startTime.getTime() + input.durationMinutes * 60000);
+        await db.updateInstallation(input.installationId, {
+          scheduledEnd: endTime,
+        });
+        await sendScheduleToSalesforce(input.installationId);
+      }
+
+      return updated;
+    }),
   }),
 
   // Technician: Mobile App for field technicians

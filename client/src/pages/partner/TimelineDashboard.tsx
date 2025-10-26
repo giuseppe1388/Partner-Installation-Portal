@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { trpc } from "@/lib/trpc";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { Resizable, ResizeCallbackData } from "react-resizable";
 import { format, addDays, startOfDay, parseISO } from "date-fns";
 import { it } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -72,13 +73,15 @@ const STATUS_COLORS: Record<string, { bg: string; label: string; color: string }
   cancelled: { bg: "bg-red-500", label: "Annullata", color: "#EF4444" },
 };
 
-// Installation Block Component
+// Installation Block Component with Resize
 function InstallationBlock({
   installation,
   onClick,
+  onResize,
 }: {
   installation: Installation;
   onClick: () => void;
+  onResize?: (newDurationMinutes: number) => void;
 }) {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: ITEM_TYPE,
@@ -92,18 +95,34 @@ function InstallationBlock({
   const width = durationHours * HOUR_WIDTH;
   const colorInfo = STATUS_COLORS[installation.status] || STATUS_COLORS.pending;
 
+  const handleResize = (event: React.SyntheticEvent, data: ResizeCallbackData) => {
+    const newWidth = data.size.width;
+    const newDurationHours = newWidth / HOUR_WIDTH;
+    const newDurationMinutes = Math.round(newDurationHours * 60);
+    onResize?.(newDurationMinutes);
+  };
+
   return (
-    <div
-      ref={drag as any}
-      className={`absolute h-[32px] ${colorInfo.bg} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
-        isDragging ? "opacity-50" : ""
-      }`}
-      style={{ width: `${width}px`, top: "4px" }}
-      onClick={onClick}
+    <Resizable
+      width={width}
+      height={32}
+      onResize={handleResize}
+      minConstraints={[HOUR_WIDTH * 0.5, 32]}
+      maxConstraints={[HOUR_WIDTH * 8, 32]}
+      resizeHandles={["e"]}
     >
-      <div className="font-medium truncate">{installation.customerName}</div>
-      <div className="text-[10px] opacity-90 truncate">{installation.installationAddress.substring(0, 30)}...</div>
-    </div>
+      <div
+        ref={drag as any}
+        className={`absolute h-[32px] ${colorInfo.bg} text-white rounded px-2 py-1 cursor-pointer hover:opacity-90 transition-opacity text-xs overflow-hidden ${
+          isDragging ? "opacity-50" : ""
+        }`}
+        style={{ width: `${width}px`, top: "4px" }}
+        onClick={onClick}
+      >
+        <div className="font-medium truncate">{installation.customerName}</div>
+        <div className="text-[10px] opacity-90 truncate">{installation.installationAddress.substring(0, 30)}...</div>
+      </div>
+    </Resizable>
   );
 }
 
@@ -115,6 +134,7 @@ function TeamRow({
   hours,
   onDrop,
   onBlockClick,
+  onResize,
 }: {
   team: Team;
   date: Date;
@@ -122,6 +142,7 @@ function TeamRow({
   hours: number[];
   onDrop: (installation: Installation, team: Team, date: Date, hour: number) => void;
   onBlockClick: (installation: Installation) => void;
+  onResize?: (installationId: number, newDurationMinutes: number) => void;
 }) {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: ITEM_TYPE,
@@ -153,7 +174,13 @@ function TeamRow({
 
         return (
           <div key={inst.id} style={{ position: 'absolute', left: `${left}px` }}>
-            <InstallationBlock installation={inst} onClick={() => onBlockClick(inst)} />
+            <InstallationBlock 
+              installation={inst} 
+              onClick={() => onBlockClick(inst)}
+              onResize={(newDurationMinutes) => {
+                onResize?.(inst.id, newDurationMinutes);
+              }}
+            />
           </div>
         );
       })}
@@ -226,8 +253,18 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
       utils.partner.myInstallations.invalidate();
       toast.success("Installazione schedulata con successo");
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Errore nella schedulazione");
+    },
+  });
+
+  const updateDurationMutation = trpc.partner.updateInstallationDuration.useMutation({
+    onSuccess: () => {
+      utils.partner.myInstallations.invalidate();
+      toast.success("Durata aggiornata");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Errore nell'aggiornamento");
     },
   });
 
@@ -275,6 +312,13 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
       teamId: team.id,
       scheduledStart: startTime.toISOString(),
       scheduledEnd: endTime.toISOString(),
+    });
+  };
+
+  const handleResize = (installationId: number, newDurationMinutes: number) => {
+    updateDurationMutation.mutate({
+      installationId,
+      durationMinutes: newDurationMinutes,
     });
   };
 
@@ -489,6 +533,7 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
                                 setSelectedInstallation(inst);
                                 setIsDetailDialogOpen(true);
                               }}
+                              onResize={handleResize}
                             />
                           ))}
                         </div>
