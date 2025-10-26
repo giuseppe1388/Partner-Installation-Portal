@@ -536,7 +536,17 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
         </div>
       </div>
       {/* Popup Dettagli Installazione */}
-      {selectedInstallation && (
+      {selectedInstallation && (() => {
+        const statusMap: Record<string, { label: string; color: string }> = {
+          pending: { label: 'In Attesa', color: 'bg-gray-500' },
+          scheduled: { label: 'Schedulata', color: 'bg-blue-500' },
+          confirmed: { label: 'Confermata', color: 'bg-purple-500' },
+          in_progress: { label: 'In Corso', color: 'bg-yellow-500' },
+          completed: { label: 'Completata', color: 'bg-green-500' },
+          cancelled: { label: 'Annullata', color: 'bg-red-500' },
+        };
+        const statusInfo = statusMap[selectedInstallation.status] || { label: 'Sconosciuto', color: 'bg-gray-500' };
+        return (
         <div className="fixed inset-0 bg-transparent flex items-center justify-center z-[10000]" onClick={() => setSelectedInstallation(null)}>
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg max-w-2xl w-full mx-4 p-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-start mb-4">
@@ -555,7 +565,10 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
               </div>
               <div>
                 <span className="font-semibold text-gray-700 dark:text-gray-300">Stato:</span>
-                <p className="text-gray-900 dark:text-white capitalize">{selectedInstallation.status}</p>
+                <div className="flex items-center gap-2">
+                  <div className={`w-3 h-3 rounded-full ${statusInfo.color}`} />
+                  <p className="text-gray-900 dark:text-white">{statusInfo.label}</p>
+                </div>
               </div>
               <div className="col-span-2">
                 <span className="font-semibold text-gray-700 dark:text-gray-300">Indirizzo Installazione:</span>
@@ -602,7 +615,8 @@ export default function TimelineDashboard({ partner, onLogout }: DashboardProps)
             </div>
           </div>
         </div>
-      )}
+        );
+      })()}
     </DndProvider>
   );
 }

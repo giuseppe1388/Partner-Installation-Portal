@@ -310,3 +310,10 @@
 - [x] Cambiare sfondo popup da nero a trasparente
 
 
+
+
+## Fase 36: Visualizzazione Stato con Colore e Nome Italiano
+- [x] Mostrare lo stato con il colore corrispondente nel popup
+- [x] Tradurre lo stato in italiano nel popup
+
+
