@@ -336,3 +336,10 @@
 - [x] Nascondere il blocco originale durante il drag
 
 
+
+
+## Fase 39: Aggiungere Tipo Installazione nella Pagina Tecnico
+- [x] Visualizzare il tipo di installazione nella card dell'installazione del tecnico
+- [x] Aggiornamento live dell'ora quando il partner cambia la schedulazione (già implementato con invalidate della query)
+
+

@@ -35,6 +35,7 @@ interface Installation {
   customerEmail?: string | null;
   customerAddress?: string | null;
   installationAddress: string;
+  installationType?: string | null;
   technicalNotes?: string | null;
   imagesToView?: string | null;
   completionLink?: string | null;
@@ -211,6 +212,11 @@ export default function TechnicianDashboard({ technician, onLogout }: DashboardP
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-2">
+                    {installation.installationType && (
+                      <div className="flex items-start gap-2 text-sm">
+                        <span className="font-medium text-blue-600 dark:text-blue-400">{installation.installationType}</span>
+                      </div>
+                    )}
                     <div className="flex items-start gap-2 text-sm">
                       <MapPin className="w-4 h-4 text-muted-foreground flex-shrink-0 mt-0.5" />
                       <span className="text-muted-foreground">{installation.installationAddress}</span>
