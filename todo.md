@@ -330,5 +330,7 @@
 - [x] Aumentare z-index del tooltip
 - [x] Verificare posizionamento del tooltip
 - [x] Assicurare che il tooltip sia sempre visibile durante il drag
+- [x] Cambiare da fixed a absolute positioning
+- [x] Aggiungere overflow-visible al contenitore
 
 

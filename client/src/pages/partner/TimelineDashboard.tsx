@@ -224,7 +224,7 @@ function TeamRow({
   return (
     <div
       ref={rowRef}
-      className={`relative border-b border-r ${isOver ? "bg-blue-50 dark:bg-blue-950" : ""}`}
+      className={`relative border-b border-r overflow-visible ${isOver ? "bg-blue-50 dark:bg-blue-950" : ""}`}
       style={{ height: `${ROW_HEIGHT}px`, minWidth: `${hours.length * HOUR_WIDTH}px` }}
       onMouseLeave={() => {
         setDragPosition(null);
@@ -250,17 +250,15 @@ function TeamRow({
           />
           {/* Tooltip con ora di inizio e fine */}
           <div
-            className="fixed bg-gray-900 text-white px-3 py-2 rounded text-sm whitespace-nowrap pointer-events-none border border-gray-700 shadow-lg"
+            className="absolute bg-gray-900 text-white px-3 py-2 rounded text-sm whitespace-nowrap pointer-events-none border border-gray-700 shadow-lg font-semibold"
             style={{
               left: `${dragPosition.x}px`,
-              top: '-50px',
+              top: '-40px',
               transform: 'translateX(-50%)',
-              zIndex: 9999,
+              zIndex: 50,
             }}
           >
-            <div className="font-semibold">
-              {String(dragPosition.hour).padStart(2, '0')}:{String(dragPosition.minute).padStart(2, '0')} - {String(endTime?.getHours()).padStart(2, '0')}:{String(endTime?.getMinutes()).padStart(2, '0')}
-            </div>
+            {String(dragPosition.hour).padStart(2, '0')}:{String(dragPosition.minute).padStart(2, '0')} - {String(endTime?.getHours()).padStart(2, '0')}:{String(endTime?.getMinutes()).padStart(2, '0')}
           </div>
         </>
       )}
