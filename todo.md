@@ -324,3 +324,11 @@
 - [x] Tipo di installazione non visibile nella sezione "Da Schedulare"
 
 
+
+
+## Fase 38: Sistemare Visibilità Tooltip Ora durante Drag
+- [x] Aumentare z-index del tooltip
+- [x] Verificare posizionamento del tooltip
+- [x] Assicurare che il tooltip sia sempre visibile durante il drag
+
+

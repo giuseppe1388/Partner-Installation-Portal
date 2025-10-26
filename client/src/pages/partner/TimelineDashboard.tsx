@@ -250,12 +250,12 @@ function TeamRow({
           />
           {/* Tooltip con ora di inizio e fine */}
           <div
-            className="absolute bg-gray-900 text-white px-3 py-2 rounded text-xs whitespace-nowrap pointer-events-none border border-gray-700"
+            className="fixed bg-gray-900 text-white px-3 py-2 rounded text-sm whitespace-nowrap pointer-events-none border border-gray-700 shadow-lg"
             style={{
               left: `${dragPosition.x}px`,
-              top: '-45px',
+              top: '-50px',
               transform: 'translateX(-50%)',
-              zIndex: 20,
+              zIndex: 9999,
             }}
           >
             <div className="font-semibold">

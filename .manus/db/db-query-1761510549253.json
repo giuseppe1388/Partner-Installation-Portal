@@ -1,0 +1,9 @@
+{
+  "query": "UPDATE installations \nSET installationType = CASE \n  WHEN id % 4 = 0 THEN 'Impianto Solare'\n  WHEN id % 4 = 1 THEN 'Pompa di Calore'\n  WHEN id % 4 = 2 THEN 'Caldaia a Condensazione'\n  ELSE 'Impianto Fotovoltaico'\nEND;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2gnoqwjMueUiDos.ce00c89cbc3c --database 4uM68RE253EuzAdgQRhHTs --execute UPDATE installations \nSET installationType = CASE \n  WHEN id % 4 = 0 THEN 'Impianto Solare'\n  WHEN id % 4 = 1 THEN 'Pompa di Calore'\n  WHEN id % 4 = 2 THEN 'Caldaia a Condensazione'\n  ELSE 'Impianto Fotovoltaico'\nEND;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 58
+}
