@@ -116,6 +116,8 @@ export const installations = mysqlTable("installations", {
   status: mysqlEnum("status", ["pending", "accepted", "scheduled", "in_progress", "completed", "cancelled", "rejected"]).default("pending").notNull(),
   /** Rejection reason (when partner rejects the installation) */
   rejectionReason: text("rejectionReason"),
+  /** Date/time when installation was accepted by partner */
+  acceptedAt: datetime("acceptedAt"),
   /** Assigned team ID (null if not scheduled) */
   teamId: int("teamId"),
   /** Assigned partner ID (null if not scheduled) */

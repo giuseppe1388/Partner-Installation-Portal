@@ -386,6 +386,20 @@
 - [x] Rendere le colonne più compatte
 - [x] Tabella deve occupare tutta la larghezza disponibile
 
+## Fase 44: Aggiungere Campo acceptedAt al Database
+- [x] Aggiungere campo acceptedAt al database
+- [x] Migrazione database completata
+- [x] Aggiornare la procedura di accettazione per registrare acceptedAt
+
+## Fase 45: Preparazione per il Deployment
+- [x] Testare il flusso completo di ricezione webhook da Salesforce
+- [x] Verificare che tutti i webhook vengono inviati correttamente
+- [x] Creare README.md con istruzioni di setup
+- [x] Creare DOCUMENTAZIONE.md con descrizione del sistema
+- [x] Creare file test-webhook.sh per testare i webhook
+- [ ] Configurare GitHub Actions per CI/CD
+- [ ] Testare il deployment su Render
+
 
 
 

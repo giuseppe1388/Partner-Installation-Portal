@@ -340,6 +340,7 @@ export const appRouter = router({
       // Update installation status to accepted
       const updated = await db.updateInstallation(input.installationId, {
         status: 'accepted',
+        acceptedAt: new Date(),
       });
 
       // Send acceptance webhook to Salesforce

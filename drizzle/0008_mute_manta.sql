@@ -1,0 +1,1 @@
+ALTER TABLE `installations` ADD `acceptedAt` datetime;

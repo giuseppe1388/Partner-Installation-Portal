@@ -57,12 +57,18 @@ Memorizza le installazioni ricevute da Salesforce.
 | `customerEmail` | varchar | Email del cliente |
 | `customerAddress` | text | Indirizzo di residenza |
 | `installationAddress` | text | Indirizzo di installazione |
+| `customerSurname` | varchar | Cognome del cliente |
+| `installationType` | varchar | Tipo di installazione (es. Impianto Solare) |
 | `technicalNotes` | text | Note tecniche |
+| `installerNotes` | text | Note installatori |
 | `imagesToView` | text | JSON array di URL immagini |
 | `completionLink` | text | Link a Digital Experience Salesforce |
+| `pdfUrl` | text | URL PDF allegato |
 | `durationMinutes` | int | Durata stimata in minuti |
 | `travelTimeMinutes` | int | Tempo di viaggio calcolato (Google Maps) |
-| `status` | enum | pending, scheduled, in_progress, completed, cancelled |
+| `status` | enum | pending, accepted, scheduled, in_progress, completed, cancelled, rejected |
+| `rejectionReason` | text | Motivo del rifiuto (se rejected) |
+| `acceptedAt` | datetime | Data/ora accettazione |
 | `teamId` | int | ID squadra assegnata |
 | `partnerId` | int | ID partner assegnato |
 | `scheduledStart` | datetime | Data/ora inizio schedulata |
@@ -105,18 +111,57 @@ Memorizza le configurazioni API.
 - Se `ServiceAppointmentId` esiste, aggiorna l'installazione
 - Altrimenti, crea una nuova installazione con stato `pending`
 
-### 2. Webhook in Uscita (Portale → Salesforce)
+### 2. Webhook in Uscita - Schedulazione (Portale → Salesforce)
 
 **Trigger**: Quando un partner schedula un'installazione
 
 **Payload JSON**:
 ```json
 {
+  "eventType": "schedule",
   "ServiceAppointmentId": "SA-001",
   "StartDateTime": "2025-10-26T09:00:00Z",
-  "EndDateTime": "2025-10-26T11:00:00Z",
-  "PartnerId": "001XXXXXXXX",
-  "TeamId": "T001XXXXXXXX"
+  "EndDateTime": "2025-10-26T11:00:00Z"
+}
+```
+
+### 3. Webhook in Uscita - Accettazione (Portale → Salesforce)
+
+**Trigger**: Quando un partner accetta un incarico
+
+**Payload JSON**:
+```json
+{
+  "eventType": "acceptance",
+  "ServiceAppointmentId": "SA-001",
+  "Status": "Accepted"
+}
+```
+
+### 4. Webhook in Uscita - Rifiuto (Portale → Salesforce)
+
+**Trigger**: Quando un partner rifiuta un incarico
+
+**Payload JSON**:
+```json
+{
+  "eventType": "rejection",
+  "ServiceAppointmentId": "SA-001",
+  "Status": "Rejected",
+  "RejectionReason": "Motivo del rifiuto"
+}
+```
+
+### 5. Webhook in Uscita - Cancellazione (Portale → Salesforce)
+
+**Trigger**: Quando un partner cancella una schedulazione
+
+**Payload JSON**:
+```json
+{
+  "eventType": "cancellation",
+  "ServiceAppointmentId": "SA-001",
+  "Status": "Cancelled"
 }
 ```
 
