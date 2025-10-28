@@ -174,10 +174,6 @@ export default function PartnerDashboard({ partner, onLogout }: DashboardProps) 
             <h1 className="text-2xl font-bold">{APP_TITLE}</h1>
             <p className="text-sm text-muted-foreground">Benvenuto, {partner.name}</p>
           </div>
-          <Button variant="outline" onClick={onLogout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Esci
-          </Button>
         </div>
       </header>
 
@@ -245,6 +241,12 @@ export default function PartnerDashboard({ partner, onLogout }: DashboardProps) 
                 ))}
               </CardContent>
             </Card>
+
+            {/* Logout Button */}
+            <Button variant="outline" onClick={onLogout} className="w-full mt-6 justify-start">
+              <LogOut className="w-4 h-4 mr-2" />
+              Esci
+            </Button>
           </div>
 
           {/* Calendar */}
