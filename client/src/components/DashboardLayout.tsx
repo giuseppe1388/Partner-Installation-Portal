@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, UsersRound, Settings, Wrench } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, UsersRound, Settings, Wrench, UserCheck, Hammer } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -232,7 +232,29 @@ function DashboardLayoutContent({
             </SidebarMenu>
           </SidebarContent>
 
-          <SidebarFooter className="p-3">
+          <SidebarFooter className="p-3 flex flex-col gap-2">
+            <div className="flex gap-2 group-data-[collapsible=icon]:flex-col">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 h-9 text-xs"
+                onClick={() => setLocation("/partner")}
+                title="Accedi come Partner"
+              >
+                <UserCheck className="h-4 w-4 mr-1" />
+                <span className="group-data-[collapsible=icon]:hidden">Partner</span>
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 h-9 text-xs"
+                onClick={() => setLocation("/technician")}
+                title="Accedi come Tecnico"
+              >
+                <Hammer className="h-4 w-4 mr-1" />
+                <span className="group-data-[collapsible=icon]:hidden">Tecnico</span>
+              </Button>
+            </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button className="flex items-center gap-3 rounded-lg px-1 py-1 hover:bg-accent/50 transition-colors w-full text-left group-data-[collapsible=icon]:justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
