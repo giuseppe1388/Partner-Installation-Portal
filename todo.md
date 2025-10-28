@@ -546,3 +546,11 @@
 - [x] Spostare il pulsante "Esci" nel footer della sidebar
 - [x] Testare il posizionamento
 
+
+
+## Fase 51: Correzioni UI Tabella Installazioni
+- [x] Aggiungere pulsante "Accetta" per le installazioni "In Attesa"
+- [x] Rimuovere il testo da "Visualizza" (solo icona)
+- [x] Rimuovere il testo da "Modifica" (solo icona)
+- [x] Allineare i pulsanti nella colonna Azioni
+
