@@ -497,3 +497,11 @@
 - [x] Implementare la navigazione alle pagine corrette
 - [x] Testare i pulsanti e la navigazione
 
+
+
+## Fase 48: Miglioramenti UI nella Tabella Installazioni
+- [x] Aggiungere pulsante "Accetta" nella tabella installazioni
+- [x] Aggiungere icone per i pulsanti "Visualizza" e "Modifica"
+- [x] Aggiungere icone per i pulsanti "Accetta" e "Rifiuta"
+- [x] Testare i pulsanti nella tabella
+
