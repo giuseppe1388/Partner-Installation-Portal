@@ -505,3 +505,38 @@
 - [x] Aggiungere icone per i pulsanti "Accetta" e "Rifiuta"
 - [x] Testare i pulsanti nella tabella
 
+
+
+## Fase 49: Documentazione Integrazione Salesforce
+- [x] Creare SALESFORCE_INTEGRATION.md con mappature complete
+- [x] Documentare il connettore da creare nel Bridge
+- [x] Fornire field mappings esatti con nomi API Salesforce
+- [x] Documentare custom fields richiesti
+- [x] Aggiungere esempi di test e troubleshooting
+- [x] Pushare la documentazione su GitHub
+
+## Stato Progetto: COMPLETATO ✅
+
+**Versione Finale:** 1.0  
+**Data Completamento:** 28 Ottobre 2025
+
+### Funzionalità Implementate:
+1. ✅ Autenticazione partner e tecnici
+2. ✅ Dashboard admin con gestione partner, squadre, installazioni
+3. ✅ Portale partner con lista installazioni
+4. ✅ Portale tecnico con calendario
+5. ✅ Webhook di ricezione da Salesforce
+6. ✅ Webhook di invio verso Salesforce (acceptance, schedule, rejection, cancellation)
+7. ✅ Pulsanti di accesso rapido nell'admin
+8. ✅ Icone nei pulsanti della tabella installazioni
+9. ✅ Pulsante "Accetta" per le installazioni pending
+10. ✅ Documentazione completa per integrazione Salesforce
+11. ✅ Repository GitHub sincronizzato
+
+### Prossimi Passi (per il cliente):
+1. Creare il connettore nel Salesforce Webhook Bridge
+2. Configurare i custom fields in Salesforce
+3. Configurare il Flow in Salesforce per inviare webhook
+4. Testare l'integrazione
+5. Deployare su Render
+
