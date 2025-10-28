@@ -238,26 +238,24 @@ export default function Installations({ partner }: InstallationsProps) {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1 flex-wrap">
+                    <div className="flex gap-1 items-center justify-center">
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleView(inst)}
-                        className="text-xs px-2 py-1 h-7"
+                        className="p-1 h-7 w-7"
                         title="Visualizza dettagli"
                       >
-                        <Eye className="w-3 h-3 mr-1" />
-                        Visualizza
+                        <Eye className="w-4 h-4" />
                       </Button>
                       <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleEdit(inst)}
-                        className="text-xs px-2 py-1 h-7"
+                        className="p-1 h-7 w-7"
                         title="Modifica installazione"
                       >
-                        <Edit className="w-3 h-3 mr-1" />
-                        Modifica
+                        <Edit className="w-4 h-4" />
                       </Button>
                       {inst.status === 'pending' && (
                         <>
@@ -271,21 +269,19 @@ export default function Installations({ partner }: InstallationsProps) {
                                 status: 'accepted' as any,
                               });
                             }}
-                            className="text-xs px-2 py-1 h-7 bg-green-600 hover:bg-green-700"
+                            className="p-1 h-7 w-7 bg-green-600 hover:bg-green-700"
                             title="Accetta incarico"
                           >
-                            <Check className="w-3 h-3 mr-1" />
-                            Accetta
+                            <Check className="w-4 h-4" />
                           </Button>
                           <Button
                             size="sm"
                             variant="destructive"
                             onClick={() => handleReject(inst)}
-                            className="text-xs px-2 py-1 h-7"
+                            className="p-1 h-7 w-7"
                             title="Rifiuta incarico"
                           >
-                            <X className="w-3 h-3 mr-1" />
-                            Rifiuta
+                            <X className="w-4 h-4" />
                           </Button>
                         </>
                       )}
