@@ -27,7 +27,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Loader2, Phone, Mail, MapPin, FileText } from "lucide-react";
+import { Loader2, Phone, Mail, MapPin, FileText, Eye, Edit, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface Installation {
@@ -244,7 +244,9 @@ export default function Installations({ partner }: InstallationsProps) {
                         variant="outline"
                         onClick={() => handleView(inst)}
                         className="text-xs px-2 py-1 h-7"
+                        title="Visualizza dettagli"
                       >
+                        <Eye className="w-3 h-3 mr-1" />
                         Visualizza
                       </Button>
                       <Button
@@ -252,18 +254,40 @@ export default function Installations({ partner }: InstallationsProps) {
                         variant="outline"
                         onClick={() => handleEdit(inst)}
                         className="text-xs px-2 py-1 h-7"
+                        title="Modifica installazione"
                       >
+                        <Edit className="w-3 h-3 mr-1" />
                         Modifica
                       </Button>
                       {inst.status === 'pending' && (
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleReject(inst)}
-                          className="text-xs px-2 py-1 h-7"
-                        >
-                          Rifiuta
-                        </Button>
+                        <>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => {
+                              setSelectedInstallation(inst);
+                              changeStatusMutation.mutate({
+                                installationId: inst.id,
+                                status: 'accepted' as any,
+                              });
+                            }}
+                            className="text-xs px-2 py-1 h-7 bg-green-600 hover:bg-green-700"
+                            title="Accetta incarico"
+                          >
+                            <Check className="w-3 h-3 mr-1" />
+                            Accetta
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => handleReject(inst)}
+                            className="text-xs px-2 py-1 h-7"
+                            title="Rifiuta incarico"
+                          >
+                            <X className="w-3 h-3 mr-1" />
+                            Rifiuta
+                          </Button>
+                        </>
                       )}
                     </div>
                   </TableCell>
