@@ -540,3 +540,9 @@
 4. Testare l'integrazione
 5. Deployare su Render
 
+
+
+## Fase 50: Spostare il Pulsante Esci in Basso
+- [x] Spostare il pulsante "Esci" nel footer della sidebar
+- [x] Testare il posizionamento
+
