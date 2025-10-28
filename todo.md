@@ -489,3 +489,11 @@
 **Versione**: 5e1a5f1c
 **Repository**: https://github.com/giuseppe1388/Partner-Installation-Portal (privato)
 
+
+
+## Fase 47: Aggiungere Pulsanti di Accesso Rapido nell'Admin
+- [x] Aggiungere pulsanti nell'Admin per accedere come Tecnico
+- [x] Aggiungere pulsanti nell'Admin per accedere come Partner
+- [x] Implementare la navigazione alle pagine corrette
+- [x] Testare i pulsanti e la navigazione
+
