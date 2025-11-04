@@ -23,7 +23,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { LogOut, Loader2, Calendar as CalendarIcon, Clock, MapPin, Users, FileText, Phone, Mail, User } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { LogOut, Loader2, Calendar as CalendarIcon, Clock, MapPin, Users, FileText, Phone, Mail, User, Edit2 } from "lucide-react";
 import { toast } from "sonner";
 import { APP_TITLE } from "@/const";
 
@@ -51,6 +52,9 @@ export default function PartnerDashboard({ partner, onLogout }: DashboardProps) 
   const [selectedTeamId, setSelectedTeamId] = useState<string>("");
   const [selectedSlot, setSelectedSlot] = useState<{ start: Date; end: Date } | null>(null);
   const [view, setView] = useState<View>("week");
+  const [isRenameDialogOpen, setIsRenameDialogOpen] = useState(false);
+  const [selectedTeamForRename, setSelectedTeamForRename] = useState<any>(null);
+  const [newTeamName, setNewTeamName] = useState("");
 
   const utils = trpc.useUtils();
   
@@ -73,6 +77,19 @@ export default function PartnerDashboard({ partner, onLogout }: DashboardProps) 
     },
     onError: (error) => {
       toast.error(error.message || "Errore nella schedulazione");
+    },
+  });
+
+  const updateTeamNameMutation = trpc.partner.updateTeamName.useMutation({
+    onSuccess: () => {
+      utils.partner.myTeams.invalidate();
+      setIsRenameDialogOpen(false);
+      setSelectedTeamForRename(null);
+      setNewTeamName("");
+      toast.success("Nome squadra aggiornato");
+    },
+    onError: (error) => {
+      toast.error(error.message || "Errore aggiornamento");
     },
   });
 
@@ -234,9 +251,22 @@ export default function PartnerDashboard({ partner, onLogout }: DashboardProps) 
               </CardHeader>
               <CardContent className="space-y-2">
                 {teams?.map((team) => (
-                  <div key={team.id} className="flex items-center gap-2 p-2 border rounded">
-                    <Users className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">{team.name}</span>
+                  <div key={team.id} className="flex items-center justify-between gap-2 p-2 border rounded">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm font-medium">{team.name}</span>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSelectedTeamForRename(team);
+                        setNewTeamName(team.name);
+                        setIsRenameDialogOpen(true);
+                      }}
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 ))}
               </CardContent>
@@ -507,6 +537,48 @@ export default function PartnerDashboard({ partner, onLogout }: DashboardProps) 
             <Button onClick={handleSchedule} disabled={scheduleMutation.isPending || !selectedTeamId || !selectedInstallation}>
               {scheduleMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Conferma Schedulazione
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Rename Team Dialog */}
+      <Dialog open={isRenameDialogOpen} onOpenChange={setIsRenameDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Rinomina Squadra</DialogTitle>
+            <DialogDescription>
+              Inserisci il nuovo nome per la squadra
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="team-name">Nome Squadra</Label>
+              <Input
+                id="team-name"
+                value={newTeamName}
+                onChange={(e) => setNewTeamName(e.target.value)}
+                placeholder="Inserisci il nuovo nome"
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsRenameDialogOpen(false)}>
+              Annulla
+            </Button>
+            <Button
+              onClick={() => {
+                if (selectedTeamForRename && newTeamName.trim()) {
+                  updateTeamNameMutation.mutate({
+                    teamId: selectedTeamForRename.id,
+                    newName: newTeamName,
+                  });
+                }
+              }}
+              disabled={updateTeamNameMutation.isPending || !newTeamName.trim()}
+            >
+              {updateTeamNameMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              Salva
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -351,6 +351,24 @@ export const appRouter = router({
 
       return updated;
     }),
+
+    // Update team name
+    updateTeamName: publicProcedure.input(z.object({
+      teamId: z.number(),
+      newName: z.string().min(1),
+    })).mutation(async ({ input }) => {
+      const team = await db.getTeamById(input.teamId);
+      if (!team) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Team not found' });
+      }
+
+      // Update team name
+      const updated = await db.updateTeam(input.teamId, {
+        name: input.newName,
+      });
+
+      return updated;
+    }),
   }),
 
   // Technician: Mobile App for field technicians

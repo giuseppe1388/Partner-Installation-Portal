@@ -554,3 +554,60 @@
 - [x] Rimuovere il testo da "Modifica" (solo icona)
 - [x] Allineare i pulsanti nella colonna Azioni
 
+
+
+
+## Fase 52: Gestione Squadre con Rinomina
+- [ ] Aggiungere possibilità di rinominare le squadre assegnate
+- [ ] Implementare UI per edit squadre
+- [ ] Sincronizzare le modifiche con il database
+- [ ] Testare la funzionalità
+
+## Fase 53: Scambio Informazioni Salesforce (ID Appuntamento e WorkOrder)
+- [ ] Aggiungere campo workOrderId al database
+- [ ] Visualizzare ID appuntamento e WorkOrder nella tabella
+- [ ] Sincronizzare con Salesforce webhook
+- [ ] Testare lo scambio dati
+
+## Fase 54: Gestione Stato Accettato con Sincronizzazione Salesforce
+- [ ] Implementare cambio stato a "accettato"
+- [ ] Inviare webhook a Salesforce con nuovo stato
+- [ ] Aggiungere popup di conferma
+- [ ] Testare la sincronizzazione
+
+## Fase 55: Gestione Stato Rifiutato con Sincronizzazione Salesforce
+- [ ] Implementare cambio stato a "rifiutato"
+- [ ] Aggiungere campo motivazione rifiuto
+- [ ] Inviare webhook a Salesforce con motivazione
+- [ ] Visualizzare partner rifiutato e motivazione
+- [ ] Aggiungere popup di conferma
+
+## Fase 56: Ordinamento per Data di Creazione
+- [ ] Ordinare le assegnazioni per data di creazione
+- [ ] Aggiungere filtro di ordinamento
+- [ ] Testare l'ordinamento
+
+## Fase 57: Popup di Conferma per Cambio Stato
+- [ ] Aggiungere popup di conferma per accettazione
+- [ ] Aggiungere popup di conferma per rifiuto
+- [ ] Aggiungere popup di conferma per schedulazione
+- [ ] Testare i popup
+
+## Fase 58: Ottimizzazione Calendario
+- [ ] Rimpicciolire il calendario
+- [ ] Mostrare un mese alla volta
+- [ ] Adattare il calendario alla pagina
+- [ ] Aggiungere popup di conferma per spostamento appuntamento
+- [ ] Testare il calendario responsive
+
+## Fase 59: Implementazione Viewer PDF
+- [ ] Aggiungere viewer PDF per allegati
+- [ ] Implementare download PDF
+- [ ] Testare il viewer PDF
+
+## Fase 60: Integrazione PDF da Salesforce
+- [ ] Ricevere PDF da Salesforce webhook
+- [ ] Memorizzare PDF nel sistema
+- [ ] Visualizzare PDF nell'interfaccia
+- [ ] Testare l'integrazione
+
