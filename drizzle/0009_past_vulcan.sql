@@ -1,0 +1,1 @@
+ALTER TABLE `installations` ADD `workOrderId` varchar(255);

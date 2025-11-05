@@ -33,6 +33,7 @@ import { toast } from "sonner";
 interface Installation {
   id: number;
   serviceAppointmentId: string;
+  workOrderId?: string | null;
   customerName: string;
   customerCF?: string | null;
   customerPhone?: string | null;
@@ -315,6 +316,16 @@ export default function Installations({ partner }: InstallationsProps) {
                   {STATUS_COLORS[selectedInstallation.status]?.label || selectedInstallation.status}
                 </Badge>
               </div>
+              <div>
+                <span className="font-semibold">ID Appuntamento:</span>
+                <p className="text-xs text-muted-foreground">{selectedInstallation.serviceAppointmentId}</p>
+              </div>
+              {selectedInstallation.workOrderId && (
+                <div>
+                  <span className="font-semibold">WorkOrder ID:</span>
+                  <p className="text-xs text-muted-foreground">{selectedInstallation.workOrderId}</p>
+                </div>
+              )}
               <div className="col-span-2">
                 <span className="font-semibold">Indirizzo Installazione:</span>
                 <p>{selectedInstallation.installationAddress}</p>

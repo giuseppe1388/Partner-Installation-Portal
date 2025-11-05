@@ -82,6 +82,8 @@ export const installations = mysqlTable("installations", {
   id: int("id").autoincrement().primaryKey(),
   /** Salesforce Service Appointment ID */
   serviceAppointmentId: varchar("serviceAppointmentId", { length: 255 }).notNull().unique(),
+  /** Salesforce WorkOrder ID for tracking */
+  workOrderId: varchar("workOrderId", { length: 255 }),
   /** Customer full name */
   customerName: varchar("customerName", { length: 255 }).notNull(),
   /** Customer surname */
