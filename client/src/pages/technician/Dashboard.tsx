@@ -17,9 +17,10 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { LogOut, Loader2, Clock, MapPin, FileText, Phone, Mail, User, Calendar as CalendarIcon, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { LogOut, Loader2, Clock, MapPin, FileText, Phone, Mail, User, Calendar as CalendarIcon, ExternalLink, Image as ImageIcon, FileIcon } from "lucide-react";
 import { toast } from "sonner";
 import { APP_TITLE } from "@/const";
+import PDFViewer from "@/components/PDFViewer";
 
 interface DashboardProps {
   technician: any;
@@ -39,6 +40,7 @@ interface Installation {
   technicalNotes?: string | null;
   imagesToView?: string | null;
   completionLink?: string | null;
+  pdfUrl?: string | null;
   durationMinutes?: number | null;
   travelTimeMinutes?: number | null;
   status: string;
@@ -60,6 +62,7 @@ export default function TechnicianDashboard({ technician, onLogout }: DashboardP
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
   const [selectedInstallation, setSelectedInstallation] = useState<Installation | null>(null);
   const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
 
   const utils = trpc.useUtils();
 
@@ -422,6 +425,23 @@ export default function TechnicianDashboard({ technician, onLogout }: DashboardP
                 </div>
               )}
 
+              {/* PDF Viewer */}
+              {selectedInstallation.pdfUrl && (
+                <div className="border-t pt-4">
+                  <h3 className="font-semibold mb-3 flex items-center gap-2">
+                    <FileIcon className="w-4 h-4" />
+                    Documentazione
+                  </h3>
+                  <Button
+                    onClick={() => setShowPDFViewer(true)}
+                    className="w-full mb-3"
+                  >
+                    <FileIcon className="w-4 h-4 mr-2" />
+                    Visualizza PDF
+                  </Button>
+                </div>
+              )}
+
               {/* Completion Link */}
               {selectedInstallation.completionLink && (
                 <div className="border-t pt-4">
@@ -447,6 +467,14 @@ export default function TechnicianDashboard({ technician, onLogout }: DashboardP
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* PDF Viewer */}
+      <PDFViewer
+        isOpen={showPDFViewer}
+        onClose={() => setShowPDFViewer(false)}
+        pdfUrl={selectedInstallation?.pdfUrl}
+        fileName={`installazione-${selectedInstallation?.serviceAppointmentId}.pdf`}
+      />
     </div>
   );
 }

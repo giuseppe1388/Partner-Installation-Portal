@@ -557,11 +557,11 @@
 
 
 
-## Fase 52: Gestione Squadre con Rinomina
-- [ ] Aggiungere possibilità di rinominare le squadre assegnate
-- [ ] Implementare UI per edit squadre
-- [ ] Sincronizzare le modifiche con il database
-- [ ] Testare la funzionalità
+## Fase 52: Gestione Squadre con Rinomina - COMPLETATA ✅
+- [x] Aggiungere possibilità di rinominare le squadre assegnate
+- [x] Implementare UI per edit squadre
+- [x] Sincronizzare le modifiche con il database
+- [x] Testare la funzionalità
 
 ## Fase 53: Scambio Informazioni Salesforce (ID Appuntamento e WorkOrder)
 - [x] Aggiungere campo workOrderId al database
@@ -601,21 +601,23 @@
 - [x] Validata sincronizzazione bidirezionale Salesforce
 - [x] Documentato il flusso completo di status management
 
-## Fase 58: Ottimizzazione Calendario
-- [ ] Rimpicciolire il calendario
-- [ ] Mostrare un mese alla volta
-- [ ] Adattare il calendario alla pagina
-- [ ] Aggiungere popup di conferma per spostamento appuntamento
-- [ ] Testare il calendario responsive
+## Fase 58: Ottimizzazione Calendario - COMPLETATA ✅
+- [x] Rimpicciolire il calendario
+- [x] Mostrare un mese alla volta
+- [x] Adattare il calendario alla pagina
+- [x] Aggiungere popup di conferma per spostamento appuntamento
+- [x] Testare il calendario responsive
 
-## Fase 59: Implementazione Viewer PDF
-- [ ] Aggiungere viewer PDF per allegati
-- [ ] Implementare download PDF
-- [ ] Testare il viewer PDF
+## Fase 59: Implementazione Viewer PDF - COMPLETATA ✅
+- [x] Aggiungere viewer PDF per allegati
+- [x] Implementare download PDF
+- [x] Testare il viewer PDF
+- [x] Integrare nel partner portal
+- [x] Integrare nel technician portal
 
-## Fase 60: Integrazione PDF da Salesforce
-- [ ] Ricevere PDF da Salesforce webhook
-- [ ] Memorizzare PDF nel sistema
-- [ ] Visualizzare PDF nell'interfaccia
-- [ ] Testare l'integrazione
+## Fase 60: Integrazione PDF da Salesforce - COMPLETATA ✅
+- [x] Ricevere PDF da Salesforce webhook
+- [x] Memorizzare PDF nel sistema
+- [x] Visualizzare PDF nell'interfaccia
+- [x] Testare l'integrazione
 

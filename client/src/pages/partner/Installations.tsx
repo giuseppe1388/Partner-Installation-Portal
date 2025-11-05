@@ -27,8 +27,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { Loader2, Phone, Mail, MapPin, FileText, Eye, Edit, Check, X } from "lucide-react";
+import { Loader2, Phone, Mail, MapPin, FileText, Eye, Edit, Check, X, FileIcon } from "lucide-react";
 import { toast } from "sonner";
+import PDFViewer from "@/components/PDFViewer";
 
 interface Installation {
   id: number;
@@ -43,6 +44,7 @@ interface Installation {
   technicalNotes?: string | null;
   imagesToView?: string | null;
   completionLink?: string | null;
+  pdfUrl?: string | null;
   durationMinutes?: number | null;
   travelTimeMinutes?: number | null;
   status: string;
@@ -74,6 +76,7 @@ export default function Installations({ partner }: InstallationsProps) {
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [rejectionReason, setRejectionReason] = useState('');
+  const [showPDFViewer, setShowPDFViewer] = useState(false);
 
   const utils = trpc.useUtils();
 
@@ -372,6 +375,16 @@ export default function Installations({ partner }: InstallationsProps) {
                   Google Maps
                 </Button>
               )}
+              {selectedInstallation?.pdfUrl && (
+                <Button 
+                  variant="outline"
+                  onClick={() => setShowPDFViewer(true)}
+                  className="flex items-center gap-2"
+                >
+                  <FileIcon className="w-4 h-4" />
+                  Visualizza PDF
+                </Button>
+              )}
             </div>
             <Button onClick={() => setShowViewDialog(false)}>Chiudi</Button>
           </DialogFooter>
@@ -535,6 +548,14 @@ export default function Installations({ partner }: InstallationsProps) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* PDF Viewer */}
+      <PDFViewer
+        isOpen={showPDFViewer}
+        onClose={() => setShowPDFViewer(false)}
+        pdfUrl={selectedInstallation?.pdfUrl}
+        fileName={`installazione-${selectedInstallation?.serviceAppointmentId}.pdf`}
+      />
     </div>
   );
 }
