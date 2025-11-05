@@ -170,3 +170,75 @@
     }
   }
 }
+
+
+/* React Big Calendar Responsive Styling */
+.rbc-calendar {
+  width: 100%;
+  overflow: hidden;
+}
+
+.rbc-header {
+  padding: 0.5rem 0.25rem;
+  font-size: 0.875rem;
+  white-space: normal;
+  word-break: break-word;
+}
+
+.rbc-today {
+  background-color: var(--accent);
+}
+
+.rbc-off-range-bg {
+  background-color: var(--muted);
+}
+
+.rbc-event {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.rbc-event-label {
+  font-size: 0.75rem;
+}
+
+.rbc-time-slot {
+  overflow: hidden;
+}
+
+/* Remove horizontal scrollbar */
+.rbc-time-view,
+.rbc-month-view {
+  overflow-x: hidden !important;
+  overflow-y: auto;
+}
+
+/* Make calendar columns responsive */
+.rbc-time-content,
+.rbc-month-row {
+  overflow-x: hidden !important;
+}
+
+/* Ensure toolbar buttons don't wrap */
+.rbc-toolbar {
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.rbc-toolbar button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+/* Make time slots narrower */
+.rbc-time-slot {
+  height: 2rem;
+}
+
+/* Adjust day column width */
+.rbc-day-bg,
+.rbc-time-slot {
+  min-width: auto;
+}
+

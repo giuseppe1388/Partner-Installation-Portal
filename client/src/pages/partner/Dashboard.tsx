@@ -291,14 +291,14 @@ export default function PartnerDashboard({ partner, onLogout }: DashboardProps) 
                   Click su uno slot vuoto per schedulare un'installazione
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div style={{ height: "600px" }}>
+              <CardContent className="p-0 overflow-hidden">
+                <div style={{ height: "600px", width: "100%" }} className="overflow-hidden">
                   <Calendar
                     localizer={localizer}
                     events={events}
                     startAccessor="start"
                     endAccessor="end"
-                    style={{ height: "100%" }}
+                    style={{ height: "100%", width: "100%" }}
                     selectable
                     onSelectSlot={(slotInfo) => {
                       // Show list of pending installations to schedule
