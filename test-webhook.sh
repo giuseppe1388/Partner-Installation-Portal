@@ -67,5 +67,25 @@ curl -X POST "$BASE_URL/api/webhook/test" \
 echo ""
 echo ""
 
+# Test 4: Accettazione installazione
+echo "Test 4: Accettazione installazione"
+echo "Nota: Questo test richiede l'ID dell'installazione dal database"
+echo "Esempio: curl -X POST \"$BASE_URL/api/trpc/partner.acceptInstallation\" \\"
+echo "  -H \"Content-Type: application/json\" \\"
+echo "  -d '{\"installationId\": 1}'"
+
+echo ""
+echo ""
+
+# Test 5: Rifiuto installazione
+echo "Test 5: Rifiuto installazione"
+echo "Nota: Questo test richiede l'ID dell'installazione dal database"
+echo "Esempio: curl -X POST \"$BASE_URL/api/trpc/partner.rejectInstallation\" \\"
+echo "  -H \"Content-Type: application/json\" \\"
+echo "  -d '{\"installationId\": 1, \"rejectionReason\": \"Motivo del rifiuto (minimo 10 caratteri)\"}'"
+
+echo ""
+echo ""
+
 echo "Test completato!"
 

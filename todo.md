@@ -564,34 +564,42 @@
 - [ ] Testare la funzionalità
 
 ## Fase 53: Scambio Informazioni Salesforce (ID Appuntamento e WorkOrder)
-- [ ] Aggiungere campo workOrderId al database
-- [ ] Visualizzare ID appuntamento e WorkOrder nella tabella
-- [ ] Sincronizzare con Salesforce webhook
-- [ ] Testare lo scambio dati
+- [x] Aggiungere campo workOrderId al database
+- [x] Visualizzare ID appuntamento e WorkOrder nella tabella
+- [x] Sincronizzare con Salesforce webhook
+- [x] Testare lo scambio dati
 
 ## Fase 54: Gestione Stato Accettato con Sincronizzazione Salesforce
-- [ ] Implementare cambio stato a "accettato"
-- [ ] Inviare webhook a Salesforce con nuovo stato
-- [ ] Aggiungere popup di conferma
-- [ ] Testare la sincronizzazione
+- [x] Implementare cambio stato a "accettato"
+- [x] Inviare webhook a Salesforce con nuovo stato
+- [x] Aggiungere popup di conferma
+- [x] Testare la sincronizzazione
 
 ## Fase 55: Gestione Stato Rifiutato con Sincronizzazione Salesforce
-- [ ] Implementare cambio stato a "rifiutato"
-- [ ] Aggiungere campo motivazione rifiuto
-- [ ] Inviare webhook a Salesforce con motivazione
-- [ ] Visualizzare partner rifiutato e motivazione
-- [ ] Aggiungere popup di conferma
+- [x] Implementare cambio stato a "rifiutato"
+- [x] Aggiungere campo motivazione rifiuto
+- [x] Inviare webhook a Salesforce con motivazione
+- [x] Visualizzare partner rifiutato e motivazione
+- [x] Aggiungere popup di conferma
 
 ## Fase 56: Ordinamento per Data di Creazione
-- [ ] Ordinare le assegnazioni per data di creazione
-- [ ] Aggiungere filtro di ordinamento
-- [ ] Testare l'ordinamento
+- [x] Ordinare le assegnazioni per data di creazione
+- [x] Aggiungere filtro di ordinamento
+- [x] Testare l'ordinamento
 
 ## Fase 57: Popup di Conferma per Cambio Stato
-- [ ] Aggiungere popup di conferma per accettazione
-- [ ] Aggiungere popup di conferma per rifiuto
-- [ ] Aggiungere popup di conferma per schedulazione
-- [ ] Testare i popup
+- [x] Aggiungere popup di conferma per accettazione
+- [x] Aggiungere popup di conferma per rifiuto
+- [x] Aggiungere popup di conferma per schedulazione
+- [x] Testare i popup
+
+## Fase 3 (Sessione Attuale): Status Management - COMPLETATA
+- [x] Verificato schema database con acceptedAt e rejectionReason
+- [x] Verificate procedure tRPC acceptInstallation e rejectInstallation
+- [x] Verificati webhook di sincronizzazione con Salesforce
+- [x] Aggiornato test-webhook.sh con esempi di accettazione/rifiuto
+- [x] Validata sincronizzazione bidirezionale Salesforce
+- [x] Documentato il flusso completo di status management
 
 ## Fase 58: Ottimizzazione Calendario
 - [ ] Rimpicciolire il calendario
